@@ -27,6 +27,7 @@ jobs:
         password: ${{ secrets.AzureAppService_ContainerPassword_6d2abe7dfe86424ba39c15d6363525bd }}
         
     - name: Build MVN
+      working-directory: ./smart-farm-backend
       run: mvn clean install
       
     - name: Build and push container image to registry
