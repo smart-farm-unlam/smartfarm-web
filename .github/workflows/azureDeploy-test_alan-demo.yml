@@ -25,11 +25,7 @@ jobs:
         registry: https://smartfarmdockertest.azurecr.io/
         username: ${{ secrets.AzureAppService_ContainerUsername_3a5728b74e334e55acbe1ede2c97c6f8 }}
         password: ${{ secrets.AzureAppService_ContainerPassword_6d2abe7dfe86424ba39c15d6363525bd }}
-        
-    - name: Build MVN
-      working-directory: ./smart-farm-backend
-      run: mvn clean install
-      
+              
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
