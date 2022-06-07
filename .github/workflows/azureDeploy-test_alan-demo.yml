@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: smartfarmdockertest.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_3a5728b74e334e55acbe1ede2c97c6f8 }}/app:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./smart-farm-backend/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
