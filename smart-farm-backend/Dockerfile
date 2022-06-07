@@ -2,8 +2,8 @@
 # Build stage
 #
 FROM maven:3.6.0-jdk-11-slim AS build
-COPY . /home/app/
-RUN mvn -f /home/app/pom.xml clean install
+RUN mvn -f ./pom.xml clean install
+COPY ./target /home/app/
 
 #
 # Package stage
