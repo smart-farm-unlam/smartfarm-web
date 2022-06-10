@@ -10,5 +10,7 @@ import lombok.Setter;
 public class Farm {
     private String id;
     private String crop;
-    private Double temperature;
+    private Double earthHumidity;
+    private Double earthTemperature;
+    private Double ambientHumidity;
 }
