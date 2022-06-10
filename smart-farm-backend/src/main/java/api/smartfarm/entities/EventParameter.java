@@ -1,5 +1,5 @@
 package api.smartfarm.entities;
 
-public enum EventParameter {
-    TEMPERATURE
+public abstract class EventParameter {
+    
 }

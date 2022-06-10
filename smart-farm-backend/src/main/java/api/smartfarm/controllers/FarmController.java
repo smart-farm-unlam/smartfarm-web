@@ -30,18 +30,18 @@ public class FarmController {
     }
 
     //"localhost:8080/farms/1/parameter?query=temperature"
-//    @GetMapping("/{id}/event")
-//    public ResponseEntity<Farm> getParameter(
-//        @PathVariable String id,
-//        @RequestParam String query
-//    ) {
-//        EventParameter event = EventParameter.valueOf(query.toUpperCase());
-//        return farmService.getParameter(id, event);
-//    }
-//
-//    @PostMapping
-//    public ResponseEntity<Farm> create(@RequestParam Farm farm) {
-//        farmService.save(farm);
-//    }
+ /*   @GetMapping("/{id}/event")
+    public ResponseEntity<Farm> getParameter(
+        @PathVariable String id,
+        @RequestParam String query
+    ) {
+        EventParameter event = EventParameter.valueOf(query.toUpperCase());
+        return farmService.getParameter(id, event);
+    }
 
+    @PostMapping
+    public ResponseEntity<Farm> create(@RequestParam Farm farm) {
+        farmService.save(farm);
+    }
+    */
 }
