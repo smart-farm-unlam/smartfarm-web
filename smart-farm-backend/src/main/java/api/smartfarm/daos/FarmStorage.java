@@ -10,7 +10,7 @@ public class FarmStorage implements FarmDAO {
 
     @Override
     public Optional<Farm> getById(String id) {
-        return Optional.of(new Farm("1", "Tomate", 21.5));
+        return Optional.of(new Farm("1", "Tomate", 21.5, 0.0, 0.0));
     }
 
     @Override
