@@ -18,8 +18,9 @@ public class FarmController {
     @Autowired
     public FarmController(FarmService farmService) {
         this.farmService = farmService;
+    }
 
-        @GetMapping
+    @GetMapping
     public String event() {
         return "Hello world con deploy atom en azure";
     }
@@ -33,8 +34,8 @@ public class FarmController {
     //"localhost:8080/farms/1/parameter?query=temperature"
     @GetMapping("/{id}/event")
     public Double getParameter(
-            @PathVariable String id,
-            @RequestParam String query
+        @PathVariable String id,
+        @RequestParam String query
     ) {
         EventParameter event = null;
         try {
