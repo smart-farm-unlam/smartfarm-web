@@ -18,6 +18,10 @@ public class FarmController {
     @Autowired
     public FarmController(FarmService farmService) {
         this.farmService = farmService;
+
+        @GetMapping
+    public String event() {
+        return "Hello world con deploy atom en azure";
     }
 
     @GetMapping("/{id}")
