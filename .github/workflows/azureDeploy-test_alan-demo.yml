@@ -6,7 +6,7 @@ name: Build and deploy container app to Azure Web App - alan-demo
 on:
   push:
     branches:
-      - azureDeploy-test
+      - main
   workflow_dispatch:
 
 jobs:
