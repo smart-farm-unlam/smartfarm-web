@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/farms")
+@CrossOrigin
 public class FarmController {
 
     private final FarmService farmService;
