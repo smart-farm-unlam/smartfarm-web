@@ -45,6 +45,8 @@ public class FarmService {
         return farmDTO;
     }
 
+    //calcular si la ultima medición es de hace menos de 15 minutos y si es mayor
+    //determinar que el microcontrolador esta desconectado del wifi
     public FarmDTO getById(String id) {
         Farm farm = farmDAO.findById(id).orElseThrow(() -> {
             LOGGER.error("Farm with id {} not exists on database", id);

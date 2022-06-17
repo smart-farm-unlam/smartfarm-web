@@ -12,10 +12,24 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "sensors")
 public class SensorType {
     @Id
-    private String id;
+    private SensorTypeId id;
 
     private String description;
     private Double min;
     private Double max;
     private String measureUnit;
+
+    @Getter
+    public enum SensorTypeId {
+        AT("Ambient Temperature"),
+        AH("Ambient Humidity"),
+        SH("Soil Humidity"),
+        ST("Soil Temperature");
+
+        private final String description;
+
+        SensorTypeId(String description) {
+            this.description = description;
+        }
+    }
 }
