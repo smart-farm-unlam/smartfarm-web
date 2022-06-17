@@ -46,7 +46,7 @@ jobs:
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: 'alan-demo'
+        app-name: 'smartfarmunlam'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_a092e9d375dc429db2a25f353c4dfa60 }}
         images: 'smartfarmdockertest.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_3a5728b74e334e55acbe1ede2c97c6f8 }}/app:${{ github.sha }}'
