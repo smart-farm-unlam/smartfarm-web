@@ -45,4 +45,13 @@ public class FarmService {
         return farmDTO;
     }
 
+    public FarmDTO getById(String id) {
+        Farm farm = farmDAO.findById(id).orElseThrow(() -> {
+            LOGGER.error("Farm with id {} not exists on database", id);
+            return new NotFoundException("Farm not exists on database");
+        });
+
+        return new FarmDTO(farm);
+    }
+
 }

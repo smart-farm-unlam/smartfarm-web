@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 public class Sensor {
-    private String id;
+    private String code;
+    private String sensorTypeId;
     private SensorStatus status;
-    private List<Measure> measures;
+    private Measure lastMeasure;
 }

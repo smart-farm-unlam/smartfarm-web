@@ -25,4 +25,9 @@ public class FarmController {
         return farmService.create(farm);
     }
 
+    @GetMapping("/{id}")
+    public FarmDTO getById(@PathVariable String id) {
+        return farmService.getById(id);
+    }
+
 }

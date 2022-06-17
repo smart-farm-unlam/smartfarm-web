@@ -12,5 +12,4 @@ import java.util.Date;
 public class Measure {
     private Date dateTime;
     private Double value;
-    private String unit;
 }

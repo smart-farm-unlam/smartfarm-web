@@ -8,12 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,7 +19,6 @@ import java.util.UUID;
 @ToString
 @Document(collection = "farms")
 public class Farm {
-    @Id
     private String id;
     private String name;
     private String userId;
@@ -31,7 +28,6 @@ public class Farm {
     private List<Event> events;
 
     public Farm(FarmDTO farmDTO) {
-        this.id = UUID.randomUUID().toString();
         this.name = farmDTO.getName();
         this.userId = farmDTO.getUserId();
         this.sensors = new ArrayList<>();
