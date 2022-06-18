@@ -16,8 +16,9 @@ public class Measure {
     private Date dateTime;
     private Double value;
 
+    //This is temporary until we fix this on the ESP32
     public Measure(MeasureDTO measureDTO) {
-        dateTime = measureDTO.getDateTime();
-        value = measureDTO.getValue();
+        dateTime = (measureDTO.getDateTime() != null)? measureDTO.getDateTime() : new Date();
+        value = Math.round(measureDTO.getValue() * 100) / 100.0;
     }
 }
