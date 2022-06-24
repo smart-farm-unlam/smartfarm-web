@@ -1,0 +1,42 @@
+[
+    {
+        "_id": "Tomate",
+        "name": "Tomate",
+        "description": "Fruta lorem insup",
+        "m2": 1.0,
+        "parameters": [
+            {
+                "name": "humedad requerida",
+                "min": 50,
+                "max": 60,
+                "unit": "%"
+            },
+            {
+                "name": "temperatura requerida",
+                "min": 10,
+                "max": 30,
+                "unit": "°C"
+            }
+        ]
+    },
+    {
+        "_id": "Albaca",
+        "name": "Albaca",
+        "description": "Fruta lorem insup",
+        "m2": 1.0,
+        "parameters": [
+            {
+                "name": "humedad requerida",
+                "min": 50,
+                "max": 60,
+                "unit": "%"
+            },
+            {
+                "name": "temperatura requerida",
+                "min": 10,
+                "max": 30,
+                "unit": "°C"
+            }
+        ]
+    }
+]

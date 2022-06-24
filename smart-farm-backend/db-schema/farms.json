@@ -1,0 +1,197 @@
+[
+    {
+        "id": "SF1",
+        "name": "MyFarm1",
+        "userId": "U1",
+        "sensors": [
+            {   "code": "AT1",
+                "sensorTypeId": "AT",
+                "status": "ON",
+                "lastMeasure":{
+                    "dateTime": "2022-06-15T12:00:00",
+                    "value": 25.0
+                }
+                
+            },
+            {
+                "code": "AH1",
+                "sensorTypeId": "AH",
+                "status": "ON",
+                "lastMeasure":{
+                    "dateTime": "2022-06-15T12:00:00",
+                    "value": 60.0
+                }
+            }
+        ],
+        "sectors": [
+            {
+                "id": "S1",
+                "row": 0,
+                "column": 0,
+                "crop": {
+                    "_id": "Tomate",
+                    "plants": [
+                        {
+                            "id": "P1S1",
+                            "row": "0",
+                            "column": "0",
+                            "diagnostics": [
+                                {
+                                    "_id": "STL1"
+                                },
+                                {
+                                    "_id": "STL2"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "P2S1",
+                            "row": "0",
+                            "column": "1",
+                            "diagnostics": [
+                                {
+                                    "_id": "STL1"
+                                },
+                                {
+                                    "_id": "STL2"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "sensors": [
+                    {
+                        "_id": "SM",
+                        "status": "ON",
+                        "measures": [
+                            {
+                                "dateTime": "2022-06-15T12:00:00",
+                                "value": 40.0,
+                                "unit": "%"
+                            },
+                            {
+                                "dateTime": "2022-06-15T12:05:00",
+                                "value": 70.0,
+                                "unit": "%"
+                            }
+                        ]
+                    },
+                    {
+                        "_id": "DS18B20",
+                        "status": "ON",
+                        "measures": [
+                            {
+                                "dateTime": "2022-06-15T12:00:00",
+                                "value": 20.5,
+                                "unit": "°C"
+                            },
+                            {
+                                "dateTime": "2022-06-15T12:15:00",
+                                "value": 21.0,
+                                "unit": "°C"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "S2",
+                "row": 0,
+                "column": 1,
+                "crop": {
+                    "_id": "Lechuga",
+                    "plants": []
+                },
+                "sensors": [
+                    {
+                        "_id": "SM",
+                        "status": "ON",
+                        "measures": [
+                            {
+                                "dateTime": "2022-06-15T12:00:00",
+                                "value": 30.0,
+                                "unit": "%"
+                            },
+                            {
+                                "dateTime": "2022-06-15T12:05:00",
+                                "value": 10.0,
+                                "unit": "%"
+                            }
+                        ]
+                    },
+                    {
+                        "_id": "DS18B20",
+                        "status": "FAIL",
+                        "measures": [
+                            {
+                                "dateTime": "2022-06-15T12:00:00",
+                                "value": 30.0,
+                                "unit": "°C"
+                            },
+                            {
+                                "dateTime": "2022-06-15T12:15:00",
+                                "value": -99.0,
+                                "unit": "°C"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "S3",
+                "row": 0,
+                "column": 2,
+                "crop": {
+                    "_id": "Zapallo",
+                    "plants": []
+                },
+                "sensors": [
+                    {
+                        "_id": "SM",
+                        "status": "ON",
+                        "measures": [
+                            {
+                                "dateTime": "2022-06-15T12:00:00",
+                                "value": 70.0,
+                                "unit": "%"
+                            },
+                            {
+                                "dateTime": "2022-06-15T12:05:00",
+                                "value": 50.0,
+                                "unit": "%"
+                            }
+                        ]
+                    },
+                    {
+                        "_id": "DS18B20",
+                        "status": "OFF",
+                        "measures": [
+                            {
+                                "dateTime": "2022-06-15T12:00:00",
+                                "value": 22.1,
+                                "unit": "°C"
+                            },
+                            {
+                                "dateTime": "2022-06-15T12:15:00",
+                                "value": 24.1,
+                                "unit": "°C"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "id": "Riego",
+                "startDate": "2022-06-15T12:30:00",
+                "endDate": "2022-06-15T12:30:30"
+            },
+            {
+                "_id": "Helada",
+                "startDate": "2022-06-16T01:30:00",
+                "endDate": "2022-06-16T02:30:30"
+            }
+        ]
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "_id": "Riego",
+        "name": "Riego automatico",
+        "description": "Activación del riego automático debido a las condiciones del suelo y el clima actual"
+    },
+    {
+        "_id": "Helada",
+        "name": "Control de heladas automático",
+        "description": "Activación de los sistemas de aspersores para control la helada cuando la temperatura del suelo sea menor a 0°C y evitar daños en el cultivo"
+    }
+]

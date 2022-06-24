@@ -1,0 +1,67 @@
+{
+    "id":"62acc77270752f2b6bbb88ee",
+    "name":"Facu-Farm",
+    "userId":"62acc72c70752f2b6bbb88ed",
+    "sensors":[
+        {
+            "code": "TA1",
+            "sensorTypeId": "DHT22_Temperature",
+            "status": "ON",
+            "lastMeasure":{
+                "dateTime": "2022-06-15T12:00:00",
+                "value": 25.0
+            }
+        },
+        {
+            "code": "TH1",
+            "sensorTypeId": "DHT22_Humidity",
+            "status": "ON",
+            "lastMeasure":{
+                "dateTime": "2022-06-15T12:00:00",
+                "value": 60.0
+            }
+            
+        }
+    ],
+    "sectors":[
+       {
+          "id":"S1",
+          "row":0,
+          "column":0,
+          "crop":{
+             "_id":"Tomate",
+             "plants":[
+                {
+                   "id":"P1S1",
+                   "row":"0",
+                   "column":"0",
+                   "diagnostics":[
+                      {
+                         "_id":"STL1"
+                      },
+                      {
+                         "_id":"STL2"
+                      }
+                   ]
+                },
+                {
+                   "id":"P2S1",
+                   "row":"0",
+                   "column":"1",
+                   "diagnostics":[
+                      {
+                         "_id":"STL1"
+                      },
+                      {
+                         "_id":"STL2"
+                      }
+                   ]
+                }
+             ]
+          }
+       }
+    ],
+    "events":[
+       
+    ]
+ }

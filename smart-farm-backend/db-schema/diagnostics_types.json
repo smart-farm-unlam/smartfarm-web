@@ -1,0 +1,12 @@
+[
+    {
+        "id": "STL1",
+        "description": "Saludable",
+        "treatment": ""
+    },
+    {
+        "id": "STL2",
+        "description": "Falta de nutrientes",
+        "treatment": "Abonar la tierra"
+    }
+]

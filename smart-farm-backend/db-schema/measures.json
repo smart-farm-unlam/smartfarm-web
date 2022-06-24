@@ -1,0 +1,111 @@
+[
+    {
+        "farmId": "SF1",
+        "sectorId": "S1",
+        "sensors": [
+            {
+                "id": "SM",
+                "measures": [
+                    {
+                        "dateTime": "2022-06-15T12:00:00",
+                        "measure": "40",
+                        "measureUnit": "%"
+                    },
+                    {
+                        "dateTime": "2022-06-15T12:05:00",
+                        "measure": "70",
+                        "measureUnit": "%"
+                    }
+                ]
+            },
+            {
+                "id": "DS18B20",
+                "measures": [
+                    {
+                        "dateTime": "2022-06-15T12:00:00",
+                        "measure": "20",
+                        "measureUnit": "°C"
+                    },
+                    {
+                        "dateTime": "2022-06-15T12:15:00",
+                        "measure": "21",
+                        "measureUnit": "°C"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "farmId": "SF1",
+        "sectorId": "S2",
+        "sensors": [
+            {
+                "id": "SM",
+                "measures": [
+                    {
+                        "dateTime": "2022-06-15T12:00:00",
+                        "measure": "30",
+                        "measureUnit": "%"
+                    },
+                    {
+                        "dateTime": "2022-06-15T12:05:00",
+                        "measure": "10",
+                        "measureUnit": "%"
+                    }
+                ]
+            },
+            {
+                "id": "DS18B20",
+                "measures": [
+                    {
+                        "dateTime": "2022-06-15T12:00:00",
+                        "measure": "30",
+                        "measureUnit": "°C"
+                    },
+                    {
+                        "dateTime": "2022-06-15T12:15:00",
+                        "measure": "35",
+                        "measureUnit": "°C"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "farmId": "SF1",
+        "sectorId": "S3",
+        "sensors": [
+            {
+                "id": "SM",
+                "measures": [
+                    {
+                        "dateTime": "2022-06-15T12:00:00",
+                        "measure": "70",
+                        "measureUnit": "%"
+                    },
+                    {
+                        "dateTime": "2022-06-15T12:05:00",
+                        "measure": "50",
+                        "measureUnit": "%"
+                    }
+                ]
+            },
+            {
+                "id": "DS18B20",
+                "measures": [
+                    {
+                        "dateTime": "2022-06-15T12:00:00",
+                        "measure": "22",
+                        "measureUnit": "°C"
+                    },
+                    {
+                        "dateTime": "2022-06-15T12:15:00",
+                        "measure": "24",
+                        "measureUnit": "°C"
+                    }
+                ]
+            }
+        ]
+    }
+
+]
