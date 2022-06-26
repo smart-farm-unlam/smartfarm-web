@@ -1,6 +1,5 @@
 package api.smartfarm.controllers;
 
-import api.smartfarm.models.dtos.FarmDTO;
 import api.smartfarm.models.entities.Sector;
 import api.smartfarm.services.SectorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sector")
+@RequestMapping("/sectors")
 @CrossOrigin
 public class SectorController {
 
@@ -21,7 +20,7 @@ public class SectorController {
     }
 
     @GetMapping("/{id}")
-    public List<Sector> getById(@PathVariable String id) {
+    public List<Sector> getSectorById(@PathVariable String id) {
         return sectorService.getSectorsById(id);
     }
 }
