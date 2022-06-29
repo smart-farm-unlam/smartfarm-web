@@ -1,7 +1,9 @@
 package api.smartfarm.models.documents;
 
 import api.smartfarm.models.dtos.FarmDTO;
+import api.smartfarm.models.entities.Crop;
 import api.smartfarm.models.entities.Event;
+import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.entities.Sensor;
 import lombok.Getter;
@@ -33,5 +35,21 @@ public class Farm {
         this.sensors = new ArrayList<>();
         this.sectors = new ArrayList<>();
         this.events = new ArrayList<>();
+    }
+
+    public Plant getPlantById(String plantId) {
+        if(sectors!=null){
+            for (Sector sector : sectors) {
+                Crop crop = sector.getCrop();
+                if(crop!=null && crop.getPlants()!=null){
+                    for (Plant plant : crop.getPlants()) {
+                        if(plant.getId().equalsIgnoreCase(plantId)){
+                            return plant;
+                        }
+                    }
+                }
+            }   
+        }
+        return null;
     }
 }
