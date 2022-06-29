@@ -1,6 +1,6 @@
 package api.smartfarm.controllers;
 
-import api.smartfarm.models.entities.Sector;
+import api.smartfarm.models.dtos.SectorDTO;
 import api.smartfarm.services.SectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +19,8 @@ public class SectorController {
         this.sectorService = sectorService;
     }
 
-    @GetMapping("/{id}")
-    public List<Sector> getSectorById(@PathVariable String id) {
-        return sectorService.getSectorsById(id);
+    @GetMapping("/{farmId}")
+    public List<SectorDTO> getSectorById(@PathVariable String farmId) {
+        return sectorService.getSectorsById(farmId);
     }
 }

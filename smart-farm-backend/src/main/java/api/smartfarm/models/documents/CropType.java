@@ -16,7 +16,6 @@ import java.util.List;
 public class CropType {
     @Id
     private String id;
-
     private String name;
     private String description;
     private Double m2;

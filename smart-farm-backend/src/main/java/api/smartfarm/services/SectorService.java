@@ -1,8 +1,7 @@
 package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.dtos.FarmDTO;
-import api.smartfarm.models.entities.Sector;
+import api.smartfarm.models.dtos.SectorDTO;
 import api.smartfarm.models.exceptions.NotFoundException;
 import api.smartfarm.repositories.FarmDAO;
 import org.slf4j.Logger;
@@ -11,24 +10,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SectorService {
 
     private final FarmDAO farmDAO;
-    private static final Logger LOGGER = LoggerFactory.getLogger(FarmService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SectorService.class);
 
     @Autowired
     public SectorService(FarmDAO farmDAO) {
         this.farmDAO = farmDAO;
     }
 
-    public List<Sector> getSectorsById(String id) {
-        Farm farm = farmDAO.findById(id).orElseThrow(() -> {
-            LOGGER.error("Farm with id {} not exists on database", id);
+    public List<SectorDTO> getSectorsById(String farmId) {
+        Farm farm = farmDAO.findById(farmId).orElseThrow(() -> {
+            LOGGER.error("Farm with farmId {} not exists on database", farmId);
             return new NotFoundException("Farm not exists on database");
         });
-        FarmDTO farmDTO = new FarmDTO(farm);
-        return farmDTO.getSectors();
+        return farm.getSectors().stream().map(SectorDTO::new).collect(Collectors.toList());
     }
 }
