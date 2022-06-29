@@ -30,8 +30,8 @@ public class FarmService {
     public FarmDTO create(FarmDTO farmDTO) {
         Optional<User> user = userDAO.findById(farmDTO.getUserId());
         if (!user.isPresent()) {
-            LOGGER.error("User with {} not exists on database", farmDTO.getUserId());
-            throw new NotFoundException("User not exists on database");
+            String errorMsg = "User with id " + farmDTO.getUserId() + "not exists on database";
+            throw new NotFoundException(errorMsg);
         }
 
         Farm farm = new Farm(farmDTO);
@@ -49,8 +49,8 @@ public class FarmService {
     //determinar que el microcontrolador esta desconectado del wifi
     public FarmDTO getById(String id) {
         Farm farm = farmDAO.findById(id).orElseThrow(() -> {
-            LOGGER.error("Farm with id {} not exists on database", id);
-            return new NotFoundException("Farm not exists on database");
+            String errorMsg = "Farm with id " + id + " not exists on database";
+            return new NotFoundException(errorMsg);
         });
 
         return new FarmDTO(farm);

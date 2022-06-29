@@ -10,7 +10,4 @@ public class NotFoundException extends ApiException {
         super(message, HTTP_STATUS_CODE);
     }
 
-    public NotFoundException(String message, Throwable throwable) {
-        super(message, throwable, HTTP_STATUS_CODE);
-    }
 }

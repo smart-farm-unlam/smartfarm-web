@@ -22,6 +22,7 @@ public class SensorService {
     private final FarmDAO farmDAO;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorService.class);
+    private static final Double ERROR_VALUE = -99.0;
 
     @Autowired
     public SensorService(FarmDAO farmDAO) {
@@ -30,8 +31,8 @@ public class SensorService {
 
     public void handleMeasures(String farmId, List<SensorDTO> sensorData) {
         Farm farm = farmDAO.findById(farmId).orElseThrow(() -> {
-            LOGGER.error("Farm with id {} not exists on database", farmId);
-            return new NotFoundException("Farm not exists on database");
+            String errorMsg = "Farm with id " + farmId + "not exists on database";
+            return new NotFoundException(errorMsg);
         });
 
         List<Sensor> farmSensors = farm.getSensors();
@@ -39,6 +40,7 @@ public class SensorService {
         for (SensorDTO sd : sensorData) {
             String code = sd.getCode();
             Measure lastMeasure = sd.getMeasures().stream().findFirst().map(Measure::new).orElse(null);
+            SensorStatus sensorStatus = resolveSensorStatus(lastMeasure);
 
             Sensor sensor = farmSensors.stream()
                 .filter(s -> s.getCode().equals(code))
@@ -46,10 +48,10 @@ public class SensorService {
                 .orElse(null);
 
             if (sensor != null) {
-                sensor.setStatus(SensorStatus.ON);
+                sensor.setStatus(sensorStatus);
                 sensor.setLastMeasure(lastMeasure);
             } else {
-                farmSensors.add(new Sensor(code, buildSensorType(code), SensorStatus.ON, lastMeasure));
+                farmSensors.add(new Sensor(code, buildSensorType(code), sensorStatus, lastMeasure));
             }
         }
 
@@ -59,6 +61,12 @@ public class SensorService {
 
     private String buildSensorType(String code) {
         return SensorTypeId.valueOf(code.substring(0, 2).toUpperCase()).name();
+    }
+
+    private SensorStatus resolveSensorStatus(Measure lastMeasure) {
+        if (lastMeasure == null || lastMeasure.getValue() == null) return SensorStatus.OFF;
+        if (lastMeasure.getValue().equals(ERROR_VALUE)) return SensorStatus.FAIL;
+        return SensorStatus.ON;
     }
 
 }
