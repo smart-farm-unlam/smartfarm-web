@@ -32,7 +32,7 @@
                     "_id": "Tomate",
                     "plants": [
                         {
-                            "id": "P1S1",
+                            "_id": "P1S1",
                             "row": "0",
                             "column": "0",
                             "diagnostics": [
@@ -45,7 +45,7 @@
                             ]
                         },
                         {
-                            "id": "P2S1",
+                            "_id": "P2S1",
                             "row": "0",
                             "column": "1",
                             "diagnostics": [

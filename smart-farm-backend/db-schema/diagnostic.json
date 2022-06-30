@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "62bbe0024591d32ad4443c43"
+  },
+  "plantId": "P1S1",
+  "dateTime": {
+    "$date": {
+      "$numberLong": "1656479746014"
+    }
+  },
+  "imgUrl": "https://alanstoragetest.blob.core.windows.net/contbobltest/gatito.png",
+  "_class": "api.smartfarm.models.documents.Diagnostic"
+}]

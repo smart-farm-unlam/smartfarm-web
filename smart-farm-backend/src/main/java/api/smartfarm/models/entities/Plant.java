@@ -14,6 +14,6 @@ public class Plant {
     private String id;
     private Integer row;
     private Integer column;
-    private List<Diagnostic> diagnostics;
+    private List<String> diagnostics;
 
 }
