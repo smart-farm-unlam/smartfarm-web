@@ -15,11 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class SectorDTO {
-    public String id;
-    public Integer row;
-    public Integer column;
-    public Crop crop;
-    public List<Sensor> sensors;
+    private String id;
+    private Integer row;
+    private Integer column;
+    private Crop crop;
+    private List<Sensor> sensors;
 
     public SectorDTO(Sector sector) {
         this.id = sector.getId();

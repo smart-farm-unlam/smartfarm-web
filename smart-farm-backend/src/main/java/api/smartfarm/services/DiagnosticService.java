@@ -1,20 +1,5 @@
 package api.smartfarm.services;
 
-import java.io.BufferedInputStream;
-import java.util.ArrayList;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.unit.DataSize;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.specialized.BlockBlobClient;
-
 import api.smartfarm.models.documents.Diagnostic;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.entities.Plant;
@@ -23,6 +8,19 @@ import api.smartfarm.models.exceptions.InvalidFileException;
 import api.smartfarm.models.exceptions.NotFoundException;
 import api.smartfarm.repositories.DiagnosticDAO;
 import api.smartfarm.repositories.FarmDAO;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.specialized.BlockBlobClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.unit.DataSize;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedInputStream;
+import java.util.ArrayList;
+import java.util.Date;
 
 @Service
 public class DiagnosticService {
@@ -35,22 +33,24 @@ public class DiagnosticService {
     @Value("${spring.cloud.azure.storage.blob.container-name}")
     private String azureBlobContName;
 
-    @Autowired
-    private FarmDAO farmDAO;
+    private final FarmDAO farmDAO;
+    private final DiagnosticDAO diagnosticDao;
+    private final BlobServiceClient blobServiceClient;
 
     @Autowired
-    private DiagnosticDAO diagnosticDao;
-
-    @Autowired
-    private BlobServiceClient blobServiceClient;
+    public DiagnosticService(
+        FarmDAO farmDAO,
+        DiagnosticDAO diagnosticDao,
+        BlobServiceClient blobServiceClient
+    ) {
+        this.farmDAO = farmDAO;
+        this.diagnosticDao = diagnosticDao;
+        this.blobServiceClient = blobServiceClient;
+    }
 
     private boolean validateDiagnosticFile(MultipartFile file) {
         long maxDataSize = DataSize.parse(maxFileSize).toBytes();
-        if (file.getSize() <= maxDataSize) {
-            // XXX ASK should validate file type?
-            return true;
-        }
-        return false;
+        return file.getSize() <= maxDataSize;
     }
 
     public void saveDiagnosticFile(String farmId, String plantId, MultipartFile file) {
@@ -67,7 +67,7 @@ public class DiagnosticService {
         diagnostic.setPlantId(plant.getId());
         diagnostic = diagnosticDao.save(diagnostic);
         if (plant.getDiagnostics() == null) {
-            plant.setDiagnostics(new ArrayList<String>());
+            plant.setDiagnostics(new ArrayList<>());
         }
         plant.getDiagnostics().add(diagnostic.getId());
         farmDAO.save(plantFarm);
@@ -75,20 +75,18 @@ public class DiagnosticService {
     }
 
     private Farm getPlantFarm(String farmId, String plantId) {
-        Farm farm = farmDAO.findByIdAndSectorsCropPlantsId(farmId, plantId).orElseThrow(() -> {
-            String errorMsg = "Farm with id " + farmId + " not exists on database or plant with id " + plantId
-                    + " not exists on farm";
+        return farmDAO.findByIdAndSectorsCropPlantsId(farmId, plantId).orElseThrow(() -> {
+            String errorMsg = "Farm with id " + farmId + " not exists on database " +
+                "or plant with id " + plantId + " not exists on farm";
             return new NotFoundException(errorMsg);
         });
-
-        return farm;
     }
 
     private String saveFileOnStorage(MultipartFile file) {
-        String fileUrl = null;
-        String filename = file.getOriginalFilename(); // TODO ver con lucas nombre del archivo
+        String fileUrl;
+        String filename = file.getOriginalFilename(); //ver con lucas nombre del archivo
         BlockBlobClient blockBlobClient = blobServiceClient.getBlobContainerClient(azureBlobContName)
-                .getBlobClient(filename).getBlockBlobClient();
+            .getBlobClient(filename).getBlockBlobClient();
         try {
             blockBlobClient.upload(new BufferedInputStream(file.getInputStream()), file.getSize(), true);
             fileUrl = blockBlobClient.getBlobUrl();
