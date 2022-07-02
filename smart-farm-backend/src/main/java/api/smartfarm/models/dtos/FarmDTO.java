@@ -1,7 +1,6 @@
 package api.smartfarm.models.dtos;
 
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.entities.Event;
 import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.entities.Sensor;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,7 @@ public class FarmDTO {
 
     private List<Sensor> sensors;
     private List<Sector> sectors;
-    private List<Event> events;
+    private List<String> events;
 
     public FarmDTO(Farm farm) {
         this.id = farm.getId();

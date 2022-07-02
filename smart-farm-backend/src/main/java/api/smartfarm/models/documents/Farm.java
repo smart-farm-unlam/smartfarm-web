@@ -2,7 +2,6 @@ package api.smartfarm.models.documents;
 
 import api.smartfarm.models.dtos.FarmDTO;
 import api.smartfarm.models.entities.Crop;
-import api.smartfarm.models.entities.Event;
 import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.entities.Sensor;
@@ -27,7 +26,7 @@ public class Farm {
 
     private List<Sensor> sensors;
     private List<Sector> sectors;
-    private List<Event> events;
+    private List<String> events;
 
     public Farm(FarmDTO farmDTO) {
         this.name = farmDTO.getName();
