@@ -11,9 +11,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document(collection = "event_types")
 public class EventType {
+
     @Id
     private String id;
-
-    private String name;
     private String description;
+
 }
