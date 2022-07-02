@@ -11,39 +11,20 @@
         "description": "Sensor de humedad del ambiente DHT22_Humidity",
         "min": 0,
         "max": 100,
-        "measureUnits": [
-            {
-                "id": "%",
-                "description": "Percentile"
-            }
-        ]
+        "measureUnit": "%"
     },
     {
         "_id": "SH",
         "description": "Sensor Capacitivo de Humedad del suelo",
         "min": 0,
         "max": 100,
-        "measureUnits": [
-            {
-                "id": "%",
-                "description": "Percentile"
-            }
-        ]
+        "measureUnit": "%"
     },
     {
         "_id": "ST",
         "description": "Sensor Temperatura del suelo",
         "min": -55,
         "max": 120,
-        "measureUnits": [
-            {
-                "id": "C",
-                "description": "Celsius"
-            },
-            {
-                "id": "F",
-                "description": "Farenheit"
-            }
-        ]
+        "measureUnit": "°C"
     }
 ]

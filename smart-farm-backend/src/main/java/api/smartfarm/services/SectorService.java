@@ -1,11 +1,11 @@
 package api.smartfarm.services;
 
+import api.smartfarm.models.documents.CropType;
 import api.smartfarm.models.documents.Farm;
+import api.smartfarm.models.dtos.SectorCropTypesDTO;
 import api.smartfarm.models.dtos.SectorDTO;
 import api.smartfarm.models.exceptions.NotFoundException;
-import api.smartfarm.repositories.FarmDAO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import api.smartfarm.repositories.CropTypeDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +15,29 @@ import java.util.stream.Collectors;
 @Service
 public class SectorService {
 
-    private final FarmDAO farmDAO;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SectorService.class);
+    private final FarmService farmService;
+    private final CropTypeDAO cropTypeDAO;
 
     @Autowired
-    public SectorService(FarmDAO farmDAO) {
-        this.farmDAO = farmDAO;
+    public SectorService(FarmService farmService, CropTypeDAO cropTypeDAO) {
+        this.farmService = farmService;
+        this.cropTypeDAO = cropTypeDAO;
     }
 
     public List<SectorDTO> getSectorsById(String farmId) {
-        Farm farm = farmDAO.findById(farmId).orElseThrow(() -> {
-            LOGGER.error("Farm with farmId {} not exists on database", farmId);
-            return new NotFoundException("Farm not exists on database");
-        });
+        Farm farm = farmService.getFarmById(farmId);
         return farm.getSectors().stream().map(SectorDTO::new).collect(Collectors.toList());
+    }
+
+    public List<SectorCropTypesDTO> getSectorsCropTypes(String farmId) {
+        Farm farm = farmService.getFarmById(farmId);
+        return farm.getSectors().stream().map(sector -> {
+            String id = sector.getCrop().getType();
+            CropType cropType = cropTypeDAO.findById(id).orElseThrow(() -> {
+                String errorMsg = "CropType with id " + id + " not exists on database";
+                return new NotFoundException(errorMsg);
+            });
+            return new SectorCropTypesDTO(sector, cropType);
+        }).collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 package api.smartfarm.controllers;
 
+import api.smartfarm.models.dtos.SectorCropTypesDTO;
 import api.smartfarm.models.dtos.SectorDTO;
 import api.smartfarm.services.SectorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +23,11 @@ public class SectorController {
     @GetMapping("/{farmId}")
     public List<SectorDTO> getSectorById(@PathVariable String farmId) {
         return sectorService.getSectorsById(farmId);
+    }
+
+    //This integration could be temporal, is for microcontroller irrigation system
+    @GetMapping("/{farmId}/crop-types")
+    public List<SectorCropTypesDTO> getSectorCropTypes(@PathVariable String farmId) {
+        return sectorService.getSectorsCropTypes(farmId);
     }
 }

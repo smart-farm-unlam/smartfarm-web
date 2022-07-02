@@ -1,67 +1,159 @@
 {
-    "id":"62acc77270752f2b6bbb88ee",
-    "name":"Facu-Farm",
-    "userId":"62acc72c70752f2b6bbb88ed",
-    "sensors":[
+    "_id": {
+        "$oid": "62acc77270752f2b6bbb88ee"
+    },
+    "name": "Facu-Farm",
+    "userId": "62acc72c70752f2b6bbb88ed",
+    "sensors": [
         {
             "code": "AT1",
             "sensorTypeId": "AT",
             "status": "ON",
-            "lastMeasure":{
-                "dateTime": "2022-06-15T12:00:00",
-                "value": 25.0
+            "lastMeasure": {
+                "dateTime": {
+                    "$date": "2022-06-18T17:23:04.330Z"
+                },
+                "value": 19
             }
         },
         {
             "code": "AH1",
             "sensorTypeId": "AH",
             "status": "ON",
-            "lastMeasure":{
-                "dateTime": "2022-06-15T12:00:00",
-                "value": 60.0
+            "lastMeasure": {
+                "dateTime": {
+                    "$date": "2022-06-18T17:23:04.330Z"
+                },
+                "value": 59.4
             }
-            
         }
     ],
-    "sectors":[
-       {
-          "id":"S1",
-          "row":0,
-          "column":0,
-          "crop":{
-             "_id":"Tomate",
-             "plants":[
+    "sectors": [
+        {
+            "code": "S1",
+            "row": 0,
+            "column": 0,
+            "crop": {
+                "plants": [
+                    {
+                        "_id": "P1S1",
+                        "row": 0,
+                        "column": 0,
+                        "diagnostics": [
+                            "{}",
+                            "62bd0f71c2ac013030872d60",
+                            "62bd0fbe206ac47698c9ec5f",
+                            "62be19055024661ab3b02617",
+                            "62bf486e5024661ab3b02618",
+                            "62bf7a235024661ab3b02619",
+                            "62bf7a395024661ab3b0261a",
+                            "62bf7b6e5024661ab3b0261b",
+                            "62bf7beb5024661ab3b0261c"
+                        ]
+                    },
+                    {
+                        "_id": "P2S1",
+                        "row": 0,
+                        "column": 0,
+                        "diagnostics": [
+                            "{}"
+                        ]
+                    }
+                ],
+                "type": "Tomate"
+            },
+            "sensors": [
                 {
-                   "id":"P1S1",
-                   "row":"0",
-                   "column":"0",
-                   "diagnostics":[
-                      {
-                         "_id":"STL1"
-                      },
-                      {
-                         "_id":"STL2"
-                      }
-                   ]
+                    "code": "SH1",
+                    "sensorTypeId": "SH",
+                    "status": "ON",
+                    "lastMeasure": {
+                        "dateTime": {
+                            "$date": "2022-06-18T17:23:04.330Z"
+                        },
+                        "value": 57
+                    }
                 },
                 {
-                   "id":"P2S1",
-                   "row":"0",
-                   "column":"1",
-                   "diagnostics":[
-                      {
-                         "_id":"STL1"
-                      },
-                      {
-                         "_id":"STL2"
-                      }
-                   ]
+                    "code": "ST1",
+                    "sensorTypeId": "ST",
+                    "status": "ON",
+                    "lastMeasure": {
+                        "dateTime": {
+                            "$date": "2022-06-18T17:23:04.330Z"
+                        },
+                        "value": 15.5
+                    }
                 }
-             ]
-          }
-       }
+            ]
+        },
+        {
+            "code": "S2",
+            "row": 0,
+            "column": 1,
+            "crop": {
+                "plants": [],
+                "type": "Lechuga"
+            },
+            "sensors": [
+                {
+                    "code": "SH2",
+                    "sensorTypeId": "SH",
+                    "status": "ON",
+                    "lastMeasure": {
+                        "dateTime": {
+                            "$date": "2022-06-18T17:23:04.330Z"
+                        },
+                        "value": 90
+                    }
+                },
+                {
+                    "code": "ST2",
+                    "sensorTypeId": "ST",
+                    "status": "ON",
+                    "lastMeasure": {
+                        "dateTime": {
+                            "$date": "2022-06-18T17:23:04.330Z"
+                        },
+                        "value": 15.5
+                    }
+                }
+            ]
+        },
+        {
+            "code": "S3",
+            "row": 0,
+            "column": 2,
+            "crop": {
+                "plants": [],
+                "type": "Albahaca"
+            },
+            "sensors": [
+                {
+                    "code": "SH3",
+                    "sensorTypeId": "SH",
+                    "status": "ON",
+                    "lastMeasure": {
+                        "dateTime": {
+                            "$date": "2022-06-18T17:23:04.330Z"
+                        },
+                        "value": 85
+                    }
+                },
+                {
+                    "code": "ST3",
+                    "sensorTypeId": "ST",
+                    "status": "ON",
+                    "lastMeasure": {
+                        "dateTime": {
+                            "$date": "2022-06-18T17:23:04.330Z"
+                        },
+                        "value": 16
+                    }
+                }
+            ]
+        }
     ],
-    "events":[
-       
-    ]
- }
+    "events": [],
+    "_class": "api.smartfarm.models.documents.Farm"
+}
