@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 
@@ -35,23 +36,36 @@ public class SensorService {
             return new NotFoundException(errorMsg);
         });
 
-        List<Sensor> farmSensors = farm.getSensors();
+        List<Sensor> sensors = farm.getSensors();
+        List<Sensor> sectorsSensors = farm.getSectors().stream()
+            .flatMap(s -> s.getSensors().stream())
+            .collect(Collectors.toList());
 
         for (SensorDTO sd : sensorData) {
             String code = sd.getCode();
             Measure lastMeasure = sd.getMeasures().stream().findFirst().map(Measure::new).orElse(null);
             SensorStatus sensorStatus = resolveSensorStatus(lastMeasure);
 
-            Sensor sensor = farmSensors.stream()
+            Sensor sensor = sensors.stream()
                 .filter(s -> s.getCode().equals(code))
-                .findAny()
+                .findFirst()
                 .orElse(null);
 
             if (sensor != null) {
                 sensor.setStatus(sensorStatus);
                 sensor.setLastMeasure(lastMeasure);
             } else {
-                farmSensors.add(new Sensor(code, buildSensorType(code), sensorStatus, lastMeasure));
+                sensor = sectorsSensors.stream()
+                    .filter(ss -> ss.getCode().equals(code))
+                    .findFirst()
+                    .orElse(null);
+
+                if (sensor != null) {
+                    sensor.setStatus(sensorStatus);
+                    sensor.setLastMeasure(lastMeasure);
+                } else {
+                    sensors.add(new Sensor(code, buildSensorType(code), sensorStatus, lastMeasure));
+                }
             }
         }
 
