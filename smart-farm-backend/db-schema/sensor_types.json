@@ -1,13 +1,13 @@
 [
     {
-        "id": "AT",
+        "_id": "AT",
         "description": "Sensor de temperatura del ambiente DHT22_Temperature",
         "min": -40,
         "max": 125,
         "measureUnit": "°C"
     },
     {
-        "id": "AH",
+        "_id": "AH",
         "description": "Sensor de humedad del ambiente DHT22_Humidity",
         "min": 0,
         "max": 100,
@@ -19,7 +19,7 @@
         ]
     },
     {
-        "id": "SH",
+        "_id": "SH",
         "description": "Sensor Capacitivo de Humedad del suelo",
         "min": 0,
         "max": 100,
@@ -31,7 +31,7 @@
         ]
     },
     {
-        "id": "ST",
+        "_id": "ST",
         "description": "Sensor Temperatura del suelo",
         "min": -55,
         "max": 120,

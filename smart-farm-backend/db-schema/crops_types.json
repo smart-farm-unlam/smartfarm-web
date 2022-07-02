@@ -2,40 +2,78 @@
     {
         "_id": "Tomate",
         "name": "Tomate",
-        "description": "Fruta lorem insup",
+        "description": "Cultivo Tomate",
         "m2": 1.0,
         "parameters": [
             {
-                "name": "humedad requerida",
-                "min": 50,
-                "max": 60,
+                "name": "humidity",
+                "min": 60.0,
+                "max": 80.0,
                 "unit": "%"
             },
             {
-                "name": "temperatura requerida",
-                "min": 10,
-                "max": 30,
+                "name": "temperature",
+                "min": 10.0,
+                "max": 30.0,
                 "unit": "°C"
+            },
+            {
+                "name": "ph",
+                "min": 5.8,
+                "max": 6.8,
+                "unit": "pH"
             }
         ]
     },
     {
-        "_id": "Albaca",
-        "name": "Albaca",
-        "description": "Fruta lorem insup",
+        "_id": "Lechuga",
+        "name": "Lechuga",
+        "description": "Cultivo Tomate",
         "m2": 1.0,
         "parameters": [
             {
-                "name": "humedad requerida",
-                "min": 50,
-                "max": 60,
+                "name": "humidity",
+                "min": 60.0,
+                "max": 80.0,
                 "unit": "%"
             },
             {
-                "name": "temperatura requerida",
-                "min": 10,
-                "max": 30,
+                "name": "temperature",
+                "min": -6.0,
+                "max": 30.0,
                 "unit": "°C"
+            },
+            {
+                "name": "ph",
+                "min": 6.7,
+                "max": 7.4,
+                "unit": "pH"
+            }
+        ]
+    },
+    {
+        "_id": "Albahaca",
+        "name": "Albahaca",
+        "description": "Cultivo Albahaca",
+        "m2": 1.0,
+        "parameters": [
+            {
+                "name": "humidity",
+                "min": 60.0,
+                "max": 70.0,
+                "unit": "%"
+            },
+            {
+                "name": "temperature",
+                "min": 0.0,
+                "max": 30.0,
+                "unit": "°C"
+            },
+            {
+                "name": "ph",
+                "min": 5.7,
+                "max": 6.2,
+                "unit": "pH"
             }
         ]
     }

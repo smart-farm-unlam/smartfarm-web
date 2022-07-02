@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class Sector {
-    private String id;
+    private String code;
     private Integer row;
     private Integer column;
     private Crop crop;

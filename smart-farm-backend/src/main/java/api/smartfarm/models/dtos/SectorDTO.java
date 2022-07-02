@@ -22,7 +22,7 @@ public class SectorDTO {
     private List<Sensor> sensors;
 
     public SectorDTO(Sector sector) {
-        this.id = sector.getId();
+        this.id = sector.getCode();
         this.row = sector.getRow();
         this.column = sector.getColumn();
         this.crop = sector.getCrop();

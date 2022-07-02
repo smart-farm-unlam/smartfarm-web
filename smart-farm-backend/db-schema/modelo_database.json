@@ -4,8 +4,8 @@
     "userId":"62acc72c70752f2b6bbb88ed",
     "sensors":[
         {
-            "code": "TA1",
-            "sensorTypeId": "DHT22_Temperature",
+            "code": "AT1",
+            "sensorTypeId": "AT",
             "status": "ON",
             "lastMeasure":{
                 "dateTime": "2022-06-15T12:00:00",
@@ -13,8 +13,8 @@
             }
         },
         {
-            "code": "TH1",
-            "sensorTypeId": "DHT22_Humidity",
+            "code": "AH1",
+            "sensorTypeId": "AH",
             "status": "ON",
             "lastMeasure":{
                 "dateTime": "2022-06-15T12:00:00",
