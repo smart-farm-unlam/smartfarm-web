@@ -3,6 +3,7 @@ package api.smartfarm.services;
 import api.smartfarm.models.documents.EventType;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
+import api.smartfarm.models.documents.events.AntiFrostEvent;
 import api.smartfarm.models.documents.events.Event;
 import api.smartfarm.models.documents.events.IrrigationEvent;
 import api.smartfarm.models.dtos.FarmDTO;
@@ -74,32 +75,49 @@ public class FarmService {
 
     public void registerEvent(String farmId, EventDTO eventDTO) {
         Event event = getEventFromEventDTO(eventDTO);
-        handleEvent(event,farmId);
+        handleEvent(event, farmId);
     }
 
     private Event getEventFromEventDTO(EventDTO eventDTO) {
         EventType eventType = getEventTypeById(eventDTO.getEventType());
-        switch (eventType.getId()){
+        switch (eventType.getId()) {
             case "IrrigationEvent":
-                return new IrrigationEvent(eventDTO,eventType);
+                return new IrrigationEvent(eventDTO, eventType);
+            case "AntiFrostEvent":
+                return new AntiFrostEvent(eventDTO, eventType);
         }
         return null;
     }
 
     private void handleEvent(Event event, String farmId) {
         Farm farm = getFarmById(farmId);
-        if(event instanceof IrrigationEvent){
+        if (event instanceof IrrigationEvent) {
             IrrigationEvent irrigationEvent = (IrrigationEvent) event;
             irrigationEvent.setFarmId(farmId);
-            if(irrigationEvent.getStartDate()!=null){
+            if (irrigationEvent.getStartDate() != null) {
                 eventDAO.save(event);
-                if(farm.getEvents()==null){
+                if (farm.getEvents() == null) {
                     farm.setEvents(new ArrayList<>());
                 }
                 farm.getEvents().add(event.getId());
-            } else if(irrigationEvent.getEndDate()!=null) {
-                event = getLastStartedEvent(farmId,event.getEventType().getId());
+            } else if (irrigationEvent.getEndDate() != null) {
+                event = getLastStartedEvent(farmId, event.getEventType().getId());
                 ((IrrigationEvent) event).setEndDate(irrigationEvent.getEndDate());
+                eventDAO.save(event);
+            }
+            farmDAO.save(farm);
+        } else if (event instanceof AntiFrostEvent) {
+            AntiFrostEvent antiFrostEvent = (AntiFrostEvent) event;
+            antiFrostEvent.setFarmId(farmId);
+            if (antiFrostEvent.getStartDate() != null) {
+                eventDAO.save(event);
+                if (farm.getEvents() == null) {
+                    farm.setEvents(new ArrayList<>());
+                }
+                farm.getEvents().add(event.getId());
+            } else if (antiFrostEvent.getEndDate() != null) {
+                event = getLastStartedEvent(farmId, event.getEventType().getId());
+                ((AntiFrostEvent) event).setEndDate(antiFrostEvent.getEndDate());
                 eventDAO.save(event);
             }
             farmDAO.save(farm);
@@ -107,13 +125,13 @@ public class FarmService {
     }
 
     private Event getLastStartedEvent(String farmId, String eventType) {
-        return eventDAO.findLastEventByFarmAndEventType(farmId,eventType)
-                .orElseThrow(()-> new NotFoundException("No started event in data base for farm id : ["+farmId+"]"+
-                        " and event type: ["+eventType+"]"));
+        return eventDAO.findLastEventByFarmAndEventType(farmId, eventType)
+                .orElseThrow(() -> new NotFoundException("No started event in data base for farm id : [" + farmId + "]" +
+                        " and event type: [" + eventType + "]"));
     }
 
     private EventType getEventTypeById(String id) {
-       return eventTypeDAO.findById(id).orElseThrow(()-> new NotFoundException("Event type: [ "+id+" ] not found in database"));
+        return eventTypeDAO.findById(id).orElseThrow(() -> new NotFoundException("Event type: [ " + id + " ] not found in database"));
     }
 
     public List<Event> getFarmEvents(String farmId) {
