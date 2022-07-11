@@ -16,4 +16,8 @@ public class EventType {
     private String id;
     private String description;
 
+    public EventType(String eventType) {
+        this.id = eventType;
+    }
+
 }

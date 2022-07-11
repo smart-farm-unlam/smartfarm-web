@@ -7,15 +7,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "eventType")
+@NoArgsConstructor
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "eventType",
+        visible = true
+)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = IrrigationEventDTO.class, name = "IrrigationEvent"),
         @JsonSubTypes.Type(value = AntiFrostEventDTO.class, name = "AntiFrostEvent")
 })
 public abstract class EventDTO {
     private String eventType;
+
+    private Date date;
+
+    private String status;
+
 }

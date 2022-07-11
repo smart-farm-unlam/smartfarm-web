@@ -18,30 +18,15 @@ import java.util.Date;
 public class IrrigationEvent extends Event {
 
     private String sectorId;
-    private Date startDate=null;
-    private Date endDate=null;
 
-    public IrrigationEvent(EventDTO eventDTO, EventType eventType) {
-        super(eventType);
-        IrrigationEventDTO castedEventDTO = (IrrigationEventDTO) eventDTO;
+    private static final EventType EVENT_TYPE = new EventType("IrrigationEvent");
 
-        this.sectorId = castedEventDTO.getSectorId();
-        setDatesBasedOnStatus(castedEventDTO);
+    public IrrigationEvent(IrrigationEventDTO irrigationEventDTO) {
+        super(EVENT_TYPE);
+        this.sectorId = irrigationEventDTO.getSectorId();
+        this.setStatus(irrigationEventDTO.getStatus());
+        super.setDatesBasedOnStatus();
     }
 
-    private void setDatesBasedOnStatus(IrrigationEventDTO eventDTO) {
-        String status = eventDTO.getStatus();
-        //Date date = eventDTO.getDate(); //TODO cambiar cuando podamos enviar le fecha desde el micro
-        Date date = new Date();
-        switch (status) {
-            case "ON":
-                this.startDate = date;
-                break;
-            case "OFF":
-                this.endDate = date;
-                break;
-            default:
-                throw new EventDTOParseException("Failed to parse [ "+this.getClass().getSimpleName()+ " ] from DTO");
-        }
-    }
+
 }
