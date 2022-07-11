@@ -20,18 +20,18 @@ public class EventsController {
         this.farmService = farmService;
     }
 
-    @PostMapping("/newEvent/{farmId}")
+    @PostMapping("/{farmId}")
     @ResponseStatus(HttpStatus.OK)
     public void registerEvent(
-            @PathVariable String farmId,
-            @RequestBody EventDTO eventDTO
+        @PathVariable String farmId,
+        @RequestBody EventDTO eventDTO
     ) {
-        farmService.registerEvent(farmId,eventDTO);
+        farmService.registerEvent(farmId, eventDTO);
     }
 
     @GetMapping("/{farmId}")
-    public List<Event> registerEvent(@PathVariable String farmId) {
-       return farmService.getFarmEvents(farmId);
+    public List<Event> getEvents(@PathVariable String farmId) {
+        return farmService.getEvents(farmId);
     }
 
 }

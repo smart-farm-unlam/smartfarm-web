@@ -73,8 +73,8 @@ public class SensorService {
         LOGGER.info("Update farm with id {} successfully", farm.getId());
     }
 
-    private String buildSensorType(String code) {
-        return SensorTypeId.valueOf(code.substring(0, 2).toUpperCase()).name();
+    private SensorTypeId buildSensorType(String code) {
+        return SensorTypeId.valueOf(code.substring(0, 2).toUpperCase());
     }
 
     private SensorStatus resolveSensorStatus(Measure lastMeasure) {

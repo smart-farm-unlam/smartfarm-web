@@ -12,9 +12,7 @@ import java.util.Date;
 public class IrrigationEventDTO extends EventDTO {
 
     private String status;
-
     private String sectorId;
-
     private Date date;
 
     public IrrigationEventDTO(){

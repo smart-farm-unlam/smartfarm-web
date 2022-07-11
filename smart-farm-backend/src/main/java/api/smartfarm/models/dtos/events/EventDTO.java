@@ -11,12 +11,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property="eventType")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "eventType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = IrrigationEventDTO.class, name = "IrrigationEvent")
+    @JsonSubTypes.Type(value = IrrigationEventDTO.class, name = "IrrigationEvent")
 })
-public abstract class EventDTO{
-
+public abstract class EventDTO {
     private String eventType;
-
 }

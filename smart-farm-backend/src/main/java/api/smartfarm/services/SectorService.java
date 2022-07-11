@@ -24,7 +24,7 @@ public class SectorService {
         this.cropTypeDAO = cropTypeDAO;
     }
 
-    public List<SectorDTO> getSectorsById(String farmId) {
+    public List<SectorDTO> getSectors(String farmId) {
         Farm farm = farmService.getFarmById(farmId);
         return farm.getSectors().stream().map(SectorDTO::new).collect(Collectors.toList());
     }

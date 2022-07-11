@@ -18,9 +18,7 @@ import java.util.Date;
 public class IrrigationEvent extends Event {
 
     private String sectorId;
-
     private Date startDate=null;
-
     private Date endDate=null;
 
     public IrrigationEvent(EventDTO eventDTO, EventType eventType) {

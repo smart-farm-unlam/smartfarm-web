@@ -116,7 +116,7 @@ public class FarmService {
        return eventTypeDAO.findById(id).orElseThrow(()-> new NotFoundException("Event type: [ "+id+" ] not found in database"));
     }
 
-    public List<Event> getFarmEvents(String farmId) {
+    public List<Event> getEvents(String farmId) {
         return eventDAO.findByFarmId(farmId);
     }
 }

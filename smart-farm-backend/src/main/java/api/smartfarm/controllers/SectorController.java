@@ -21,8 +21,8 @@ public class SectorController {
     }
 
     @GetMapping("/{farmId}")
-    public List<SectorDTO> getSectorById(@PathVariable String farmId) {
-        return sectorService.getSectorsById(farmId);
+    public List<SectorDTO> getSectors(@PathVariable String farmId) {
+        return sectorService.getSectors(farmId);
     }
 
     //This integration could be temporal, is for microcontroller irrigation system

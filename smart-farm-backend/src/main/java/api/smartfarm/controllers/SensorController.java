@@ -22,7 +22,7 @@ public class SensorController {
 
     @PostMapping("/{farmId}/events")
     @ResponseStatus(HttpStatus.OK)
-    public void postEvent(
+    public void sensorData(
         @PathVariable String farmId,
         @RequestBody List<SensorDTO> sensorsData
     ) {
