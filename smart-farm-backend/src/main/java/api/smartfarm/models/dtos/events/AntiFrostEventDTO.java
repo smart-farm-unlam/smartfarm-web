@@ -1,14 +1,12 @@
 package api.smartfarm.models.dtos.events;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class IrrigationEventDTO extends EventDTO {
-    private String sectorId;
+public class AntiFrostEventDTO extends EventDTO {
+
 }
