@@ -1,19 +1,9 @@
 package api.smartfarm.services;
 
-import api.smartfarm.models.documents.EventType;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
-import api.smartfarm.models.documents.events.AntiFrostEvent;
-import api.smartfarm.models.documents.events.Event;
-import api.smartfarm.models.documents.events.IrrigationEvent;
 import api.smartfarm.models.dtos.FarmDTO;
-import api.smartfarm.models.dtos.events.AntiFrostEventDTO;
-import api.smartfarm.models.dtos.events.EventDTO;
-import api.smartfarm.models.dtos.events.IrrigationEventDTO;
-import api.smartfarm.models.exceptions.InternalServerError;
 import api.smartfarm.models.exceptions.NotFoundException;
-import api.smartfarm.repositories.EventDAO;
-import api.smartfarm.repositories.EventTypeDAO;
 import api.smartfarm.repositories.FarmDAO;
 import api.smartfarm.repositories.UserDAO;
 import org.slf4j.Logger;
@@ -21,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,17 +18,13 @@ public class FarmService {
 
     private final FarmDAO farmDAO;
     private final UserDAO userDAO;
-    private final EventTypeDAO eventTypeDAO;
-    private final EventDAO eventDAO;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FarmService.class);
 
     @Autowired
-    public FarmService(FarmDAO farmDAO, UserDAO userDAO, EventTypeDAO eventTypeDAO, EventDAO eventDAO) {
+    public FarmService(FarmDAO farmDAO, UserDAO userDAO) {
         this.farmDAO = farmDAO;
         this.userDAO = userDAO;
-        this.eventTypeDAO = eventTypeDAO;
-        this.eventDAO = eventDAO;
     }
 
     public FarmDTO create(FarmDTO farmDTO) {
@@ -75,60 +59,9 @@ public class FarmService {
         });
     }
 
-    public void registerEvent(String farmId, EventDTO eventDTO) {
-        Event event = getEventFromEventDTO(eventDTO);
-        handleEvent(event, farmId);
-    }
-
-    private Event getEventFromEventDTO(EventDTO eventDTO) {
-        EventType eventType = getEventTypeById(eventDTO.getEventType());
-        switch (eventType.getId()) {
-            case "IrrigationEvent":
-                return new IrrigationEvent((IrrigationEventDTO) eventDTO);
-            case "AntiFrostEvent":
-                return new AntiFrostEvent((AntiFrostEventDTO) eventDTO);
-            default:
-                throw new InternalServerError("Event type: [" + eventType.getId() + "] not supported");
-        }
-    }
-
-    private void handleEvent(Event event, String farmId) {
-        Farm farm = getFarmById(farmId);
-        event.setFarmId(farmId);
-        if (event.getStartDate() != null) {
-            eventDAO.save(event);
-            if (farm.getEvents() == null) {
-                farm.setEvents(new ArrayList<>());
-            }
-            farm.getEvents().add(event.getId());
-        } else if (event.getEndDate() != null) {
-            Event lastStartedEvent = getLastStartedEvent(farmId, event);
-            lastStartedEvent.setEndDate(event.getEndDate());
-            eventDAO.save(lastStartedEvent);
-        }
+    public void update(Farm farm) {
         farmDAO.save(farm);
+        new FarmDTO(farm);
     }
 
-    private Event getLastStartedEvent(String farmId, Event event) {
-        String eventType = event.getEventType().getId();
-        if (event instanceof IrrigationEvent) {
-            String sectorId = ((IrrigationEvent) event).getSectorId();
-            return eventDAO.findLastEventByFarmAndSectorAndEventType(farmId, sectorId, eventType)
-                    .orElseThrow(() -> new NotFoundException("No started event in data base for farm id : [" + farmId + "]" +
-                            " or sector id: [" + sectorId + "]and event type: [" + eventType + "]"));
-        } else if (event instanceof AntiFrostEvent) {
-            return eventDAO.findLastEventByFarmAndEventType(farmId, eventType)
-                    .orElseThrow(() -> new NotFoundException("No started event in data base for farm id : [" + farmId + "]" +
-                            " and event type: [" + eventType + "]"));
-        }
-        throw new InternalServerError("Event type: [" + eventType + "] not supported");
-    }
-
-    private EventType getEventTypeById(String id) {
-        return eventTypeDAO.findById(id).orElseThrow(() -> new NotFoundException("Event type: [ " + id + " ] not found in database"));
-    }
-
-    public List<Event> getEvents(String farmId) {
-        return eventDAO.findByFarmId(farmId);
-    }
 }

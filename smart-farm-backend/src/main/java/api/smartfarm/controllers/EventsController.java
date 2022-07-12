@@ -3,7 +3,8 @@ package api.smartfarm.controllers;
 
 import api.smartfarm.models.documents.events.Event;
 import api.smartfarm.models.dtos.events.EventDTO;
-import api.smartfarm.services.FarmService;
+import api.smartfarm.services.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +15,11 @@ import java.util.List;
 @CrossOrigin
 public class EventsController {
 
-    private final FarmService farmService;
+    private final EventService eventService;
 
-    public EventsController(FarmService farmService) {
-        this.farmService = farmService;
+    @Autowired
+    public EventsController(EventService eventService) {
+        this.eventService = eventService;
     }
 
     @PostMapping("/{farmId}")
@@ -26,12 +28,12 @@ public class EventsController {
         @PathVariable String farmId,
         @RequestBody EventDTO eventDTO
     ) {
-        farmService.registerEvent(farmId, eventDTO);
+        eventService.registerEvent(farmId, eventDTO);
     }
 
     @GetMapping("/{farmId}")
     public List<Event> getEvents(@PathVariable String farmId) {
-        return farmService.getEvents(farmId);
+        return eventService.getEvents(farmId);
     }
 
 }

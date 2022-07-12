@@ -11,11 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AntiFrostEvent extends Event {
 
-    private static final EventType EVENT_TYPE = new EventType("AntiFrostEvent");
-
-    public AntiFrostEvent(AntiFrostEventDTO antiFrostEventDTO) {
-        super(EVENT_TYPE);
-        this.setStatus(antiFrostEventDTO.getStatus());
-        super.setDatesBasedOnStatus();
+    public AntiFrostEvent(AntiFrostEventDTO antiFrostEventDTO, EventType eventType) {
+        super(eventType);
+        super.setDatesBasedOnStatus(antiFrostEventDTO.getStatus());
     }
 }

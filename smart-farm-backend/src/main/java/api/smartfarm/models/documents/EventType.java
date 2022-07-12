@@ -15,9 +15,4 @@ public class EventType {
     @Id
     private String id;
     private String description;
-
-    public EventType(String eventType) {
-        this.id = eventType;
-    }
-
 }

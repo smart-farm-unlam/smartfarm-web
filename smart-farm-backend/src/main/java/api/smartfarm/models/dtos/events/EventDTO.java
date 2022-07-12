@@ -25,9 +25,6 @@ import java.util.Date;
 })
 public abstract class EventDTO {
     private String eventType;
-
     private Date date;
-
     private String status;
-
 }
