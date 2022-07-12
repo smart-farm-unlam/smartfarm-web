@@ -2,12 +2,14 @@ package api.smartfarm.models.documents.events;
 
 import api.smartfarm.models.documents.EventType;
 import api.smartfarm.models.exceptions.EventDTOParseException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -29,6 +31,9 @@ public abstract class Event {
     private Date endDate;
 
     private String farmId;
+
+    @Transient
+    @JsonIgnore
     private String status;
 
     protected Event(EventType eventType) {

@@ -2,14 +2,12 @@ package api.smartfarm.models.documents.events;
 
 import api.smartfarm.models.documents.EventType;
 import api.smartfarm.models.dtos.events.AntiFrostEventDTO;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class AntiFrostEvent extends Event {
 
