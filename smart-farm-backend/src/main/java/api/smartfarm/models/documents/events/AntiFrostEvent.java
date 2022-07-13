@@ -13,6 +13,6 @@ public class AntiFrostEvent extends Event {
 
     public AntiFrostEvent(AntiFrostEventDTO antiFrostEventDTO, EventType eventType) {
         super(eventType);
-        super.setDatesBasedOnStatus(antiFrostEventDTO.getStatus());
+        super.setDatesBasedOnStatus(antiFrostEventDTO.getDate(), antiFrostEventDTO.getStatus());
     }
 }

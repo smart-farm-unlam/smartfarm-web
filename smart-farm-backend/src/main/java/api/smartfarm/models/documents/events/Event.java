@@ -35,9 +35,8 @@ public abstract class Event {
         this.eventType = eventType;
     }
 
-    protected void setDatesBasedOnStatus(String status) {
-        //Date date = eventDTO.getDate(); //TODO cambiar cuando podamos enviar le fecha desde el micro
-        Date date = new Date();
+    protected void setDatesBasedOnStatus(Date eventDate, String status) {
+        Date date = (eventDate != null)? eventDate : new Date();
         switch (status) {
             case "ON":
                 this.startDate = date;

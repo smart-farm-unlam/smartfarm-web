@@ -18,7 +18,7 @@ public class IrrigationEvent extends Event {
     public IrrigationEvent(IrrigationEventDTO irrigationEventDTO, EventType eventType) {
         super(eventType);
         this.setSectorId(irrigationEventDTO.getSectorId());
-        super.setDatesBasedOnStatus(irrigationEventDTO.getStatus());
+        super.setDatesBasedOnStatus(irrigationEventDTO.getDate(), irrigationEventDTO.getStatus());
     }
 
 }
