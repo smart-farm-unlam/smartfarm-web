@@ -1,5 +1,6 @@
 package api.smartfarm.models.entities;
 
+import api.smartfarm.models.dtos.SectorDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,4 +18,12 @@ public class Sector {
     private Integer column;
     private Crop crop;
     private List<Sensor> sensors;
+
+    public Sector(SectorDTO sectorDTO) {
+        this.code = sectorDTO.getCode();
+        this.row = sectorDTO.getRow();
+        this.column = sectorDTO.getColumn();
+        this.crop = sectorDTO.getCrop();
+        this.sensors = sectorDTO.getSensors();
+    }
 }
