@@ -2,7 +2,6 @@ package api.smartfarm.services;
 
 import api.smartfarm.models.documents.CropType;
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.dtos.FarmDTO;
 import api.smartfarm.models.dtos.SectorCropTypesDTO;
 import api.smartfarm.models.dtos.SectorDTO;
 import api.smartfarm.models.entities.Sector;
@@ -58,6 +57,18 @@ public class SectorService {
         farm.getSectors().add(new Sector(sectorDTO));
         farmDAO.save(farm);
         LOGGER.info("Saved farm {} successfully", farm);
+        return sectorDTO;
+    }
+
+    public SectorDTO update(String farmId, String sectorId, SectorDTO sectorDTO) {
+        Farm farm = farmService.getFarmById(farmId);
+        LOGGER.info("Getting farmId: {} for create sectors", farmId);
+        farm.getSectors().forEach(sector -> {
+            if(sector.getCode().equals(sectorId)){
+                sector.getSensors().addAll(sectorDTO.getSensors());
+                LOGGER.info("Update add sensors to farm sector {} {} successfully", farm, sectorId);
+            }
+        });
         return sectorDTO;
     }
 }
