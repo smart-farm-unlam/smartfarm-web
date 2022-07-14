@@ -3,6 +3,7 @@ package api.smartfarm.controllers;
 
 import api.smartfarm.models.documents.events.Event;
 import api.smartfarm.models.dtos.events.EventDTO;
+import api.smartfarm.models.dtos.events.EventListsDTO;
 import api.smartfarm.services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,15 @@ public class EventsController {
         @RequestBody EventDTO eventDTO
     ) {
         eventService.registerEvent(farmId, eventDTO);
+    }
+
+    @PostMapping("/multiple/{farmId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void registerEvent(
+            @PathVariable String farmId,
+            @RequestBody EventListsDTO eventListsDTO
+    ) {
+        eventService.registerEventLists(farmId, eventListsDTO);
     }
 
     @GetMapping("/{farmId}")
