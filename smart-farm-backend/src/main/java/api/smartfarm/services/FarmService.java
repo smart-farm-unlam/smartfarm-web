@@ -53,6 +53,7 @@ public class FarmService {
     }
 
     public Farm getFarmById(String id) {
+        LOGGER.info("Getting farm with id {}", id);
         return farmDAO.findById(id).orElseThrow(() -> {
             String errorMsg = "Farm with id " + id + " not exists on database";
             return new NotFoundException(errorMsg);
