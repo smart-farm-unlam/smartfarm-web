@@ -9,4 +9,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AntiFrostEventDTO extends EventDTO {
 
+    @Override
+    public String toString() {
+        return "AntiFrostEventDTO(" +
+            "eventType=" + this.getEventType() +
+            ", date=" + this.getDate() +
+            ", status=" + this.getStatus() +
+            ")";
+    }
 }

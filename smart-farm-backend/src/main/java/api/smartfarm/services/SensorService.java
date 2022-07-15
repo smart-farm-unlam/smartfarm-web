@@ -5,8 +5,6 @@ import api.smartfarm.models.dtos.SensorDTO;
 import api.smartfarm.models.entities.Measure;
 import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.entities.SensorStatus;
-import api.smartfarm.models.exceptions.NotFoundException;
-import api.smartfarm.repositories.FarmDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +18,20 @@ import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 @Service
 public class SensorService {
 
-    private final FarmDAO farmDAO;
+    private final FarmService farmService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorService.class);
     private static final Double ERROR_VALUE = -99.0;
 
     @Autowired
-    public SensorService(FarmDAO farmDAO) {
-        this.farmDAO = farmDAO;
+    public SensorService(FarmService farmService) {
+        this.farmService = farmService;
     }
 
     public void handleMeasures(String farmId, List<SensorDTO> sensorData) {
-        Farm farm = farmDAO.findById(farmId).orElseThrow(() -> {
-            String errorMsg = "Farm with id " + farmId + "not exists on database";
-            return new NotFoundException(errorMsg);
-        });
+        Farm farm = farmService.getFarmById(farmId);
 
+        LOGGER.info("Sensors Data received: {}", sensorData);
         List<Sensor> sensors = farm.getSensors();
         List<Sensor> sectorsSensors = farm.getSectors().stream()
             .flatMap(s -> s.getSensors().stream())
@@ -69,7 +65,7 @@ public class SensorService {
             }
         }
 
-        farmDAO.save(farm);
+        farmService.update(farm);
         LOGGER.info("Update farm with id {} successfully", farm.getId());
     }
 

@@ -36,7 +36,7 @@ public class FarmService {
 
         Farm farm = new Farm(farmDTO);
         farmDAO.save(farm);
-        LOGGER.info("Saved farm {} successfully", farm);
+        LOGGER.info("Farm created with id {}", farm.getId());
 
         farmDTO.setId(farm.getId());
         farmDTO.setSensors(farm.getSensors());
@@ -53,6 +53,7 @@ public class FarmService {
     }
 
     public Farm getFarmById(String id) {
+        LOGGER.info("Getting farm with id {}", id);
         return farmDAO.findById(id).orElseThrow(() -> {
             String errorMsg = "Farm with id " + id + " not exists on database";
             return new NotFoundException(errorMsg);
@@ -61,6 +62,7 @@ public class FarmService {
 
     public void update(Farm farm) {
         farmDAO.save(farm);
+        LOGGER.info("Farm {} updated successfully", farm.getId());
         new FarmDTO(farm);
     }
 
