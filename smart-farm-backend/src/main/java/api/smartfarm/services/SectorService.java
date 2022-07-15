@@ -4,8 +4,10 @@ import api.smartfarm.models.documents.CropType;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.dtos.SectorCropTypesDTO;
 import api.smartfarm.models.dtos.SectorDTO;
+import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.exceptions.NotFoundException;
 import api.smartfarm.repositories.CropTypeDAO;
+import api.smartfarm.repositories.FarmDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +47,25 @@ public class SectorService {
             });
             return new SectorCropTypesDTO(sector, cropType);
         }).collect(Collectors.toList());
+    }
+
+    public SectorDTO create(String farmId, SectorDTO sectorDTO) {
+        Farm farm = farmService.getFarmById(farmId);
+        LOGGER.info("Adding sector {} to farm {}", sectorDTO.getCode(), farmId);
+        farm.getSectors().add(new Sector(sectorDTO));
+        farmService.update(farm);
+        return sectorDTO;
+    }
+
+    public SectorDTO update(String farmId, String sectorId, SectorDTO sectorDTO) {
+        Farm farm = farmService.getFarmById(farmId);
+        LOGGER.info("Getting farmId: {} for create sectors", farmId);
+        farm.getSectors().forEach(sector -> {
+            if (sector.getCode().equals(sectorId)) {
+                sector.getSensors().addAll(sectorDTO.getSensors());
+                LOGGER.info("Update add sensors to farm sector {} {} successfully", farm, sectorId);
+            }
+        });
+        return sectorDTO;
     }
 }

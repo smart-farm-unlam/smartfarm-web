@@ -2,8 +2,10 @@ package api.smartfarm.controllers;
 
 import api.smartfarm.models.dtos.SectorCropTypesDTO;
 import api.smartfarm.models.dtos.SectorDTO;
+import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.services.SectorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,5 +31,17 @@ public class SectorController {
     @GetMapping("/{farmId}/crop-types")
     public List<SectorCropTypesDTO> getSectorCropTypes(@PathVariable String farmId) {
         return sectorService.getSectorsCropTypes(farmId);
+    }
+
+    @PostMapping("/{farmId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SectorDTO create(@PathVariable String farmId, @RequestBody SectorDTO sectorDTO) {
+        return sectorService.create(farmId, sectorDTO);
+    }
+
+    @PutMapping("/{farmId}/{sectorId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SectorDTO update(@PathVariable String farmId, @PathVariable String sectorId, @RequestBody SectorDTO sectorDTO) {
+        return sectorService.update(farmId, sectorId, sectorDTO);
     }
 }
