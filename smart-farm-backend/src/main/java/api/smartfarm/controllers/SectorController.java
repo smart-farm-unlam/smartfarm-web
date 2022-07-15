@@ -31,6 +31,18 @@ public class SectorController {
         return sectorService.getSectorsCropTypes(farmId);
     }
 
+    @PostMapping("/{farmId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public SectorDTO create(@PathVariable String farmId, @RequestBody SectorDTO sectorDTO) {
+        return sectorService.create(farmId, sectorDTO);
+    }
+
+    @PutMapping("/{farmId}/{sectorId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SectorDTO update(@PathVariable String farmId, @PathVariable String sectorId, @RequestBody SectorDTO sectorDTO) {
+        return sectorService.update(farmId, sectorId, sectorDTO);
+    }
+
     @PostMapping("/{farmId}/crop-type")
     @ResponseStatus(HttpStatus.CREATED)
     public void setSectorCropType(
