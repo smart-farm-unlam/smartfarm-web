@@ -36,7 +36,7 @@ public class FarmService {
 
         Farm farm = new Farm(farmDTO);
         farmDAO.save(farm);
-        LOGGER.info("Saved farm {} successfully", farm);
+        LOGGER.info("Farm created with id {}", farm.getId());
 
         farmDTO.setId(farm.getId());
         farmDTO.setSensors(farm.getSensors());
@@ -62,6 +62,7 @@ public class FarmService {
 
     public void update(Farm farm) {
         farmDAO.save(farm);
+        LOGGER.info("Farm {} updated successfully", farm.getId());
         new FarmDTO(farm);
     }
 
