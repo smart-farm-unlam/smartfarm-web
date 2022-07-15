@@ -19,7 +19,7 @@ import java.util.List;
 public class FarmDTO {
     @Null
     private String id;
-    @NotEmpty
+    //@NotEmpty
     private String name;
     @NotEmpty
     private String userId;

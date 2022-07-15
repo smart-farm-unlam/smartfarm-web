@@ -4,6 +4,7 @@ import api.smartfarm.models.documents.EventType;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.events.Event;
 import api.smartfarm.models.dtos.events.EventDTO;
+import api.smartfarm.models.dtos.events.EventListsDTO;
 import api.smartfarm.models.exceptions.NotFoundException;
 import api.smartfarm.repositories.EventDAO;
 import api.smartfarm.repositories.EventTypeDAO;
@@ -82,4 +83,8 @@ public class EventService {
         );
     }
 
+    public void registerEventLists(String farmId, EventListsDTO eventListDTO) {
+        eventListDTO.getIrrigationEvents().forEach(event -> registerEvent(farmId, event));
+        eventListDTO.getAntiFrostEvents().forEach(event -> registerEvent(farmId, event));
+    }
 }
