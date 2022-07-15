@@ -1,11 +1,14 @@
 package api.smartfarm.models.entities;
 
+import api.smartfarm.models.dtos.MeasureDTO;
 import api.smartfarm.models.dtos.SensorDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
+
+import java.util.List;
 
 import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 
@@ -23,12 +26,16 @@ public class Sensor {
     private Measure lastMeasure;
 
     public Sensor(SensorDTO sensorDTO) {
-        buildSensorType(sensorDTO.getCode());
-        this.lastMeasure = sensorDTO.getMeasures().stream().findFirst().map(Measure::new).orElse(null);
+        this.code = sensorDTO.getCode();
+        buildSensorType();
+        List<MeasureDTO> measuresDTO = sensorDTO.getMeasures();
+        if (measuresDTO != null) {
+            this.lastMeasure = measuresDTO.stream().findFirst().map(Measure::new).orElse(null);
+        }
         this.resolveSensorStatus();
     }
 
-    private void buildSensorType(String code) {
+    private void buildSensorType() {
         this.sensorTypeId = SensorTypeId.valueOf(code.substring(0, 2).toUpperCase());
     }
 

@@ -43,29 +43,29 @@ public class SectorController {
         return sectorService.update(farmId, sectorId, sectorDTO);
     }
 
-    @PostMapping("/{farmId}/crop-type")
+    @PostMapping("/{farmId}/set_crops")
     @ResponseStatus(HttpStatus.CREATED)
-    public void setSectorCropType(
+    public void setSectorsCropType(
             @PathVariable String farmId,
-            @RequestBody CropDTO cropDTO) {
-        sectorService.setSectorCropType(farmId,cropDTO);
+            @RequestBody List<CropDTO> cropDTOS) {
+        sectorService.setSectorsCropType(farmId,cropDTOS);
     }
 
     @PostMapping("/{farmId}/sensors")
     @ResponseStatus(HttpStatus.CREATED)
     public void addSensor(
             @PathVariable String farmId,
-            @RequestBody SensorDTO sensorDTO
+            @RequestBody List<SensorDTO> sensorDTOS
     ) {
-        sectorService.addSensor(farmId, sensorDTO);
+        sectorService.addSensors(farmId, sensorDTOS);
     }
 
     @PostMapping("/{farmId}/plants")
     @ResponseStatus(HttpStatus.CREATED)
     public void addPlant(
             @PathVariable String farmId,
-            @RequestBody PlantDTO plantDTO
+            @RequestBody List<PlantDTO> plantDTOS
     ) {
-        sectorService.addPlant(farmId, plantDTO);
+        sectorService.addPlants(farmId, plantDTOS);
     }
 }
