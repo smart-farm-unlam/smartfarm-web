@@ -25,7 +25,7 @@ public class EventsController {
 
     @PostMapping("/{farmId}")
     @ResponseStatus(HttpStatus.OK)
-    public void registerEvent(
+    public void registerEventLists(
         @PathVariable String farmId,
         @RequestBody EventDTO eventDTO
     ) {
@@ -34,7 +34,7 @@ public class EventsController {
 
     @PostMapping("/multiple/{farmId}")
     @ResponseStatus(HttpStatus.OK)
-    public void registerEvent(
+    public void registerEventLists(
             @PathVariable String farmId,
             @RequestBody EventListsDTO eventListsDTO
     ) {
