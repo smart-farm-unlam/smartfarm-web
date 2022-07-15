@@ -2,10 +2,8 @@ package api.smartfarm.services;
 
 import api.smartfarm.models.documents.CropType;
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.dtos.PlantDTO;
-import api.smartfarm.models.dtos.SectorCropTypesDTO;
-import api.smartfarm.models.dtos.SectorDTO;
-import api.smartfarm.models.dtos.SensorDTO;
+import api.smartfarm.models.dtos.*;
+import api.smartfarm.models.entities.Crop;
 import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.entities.Sensor;
@@ -52,6 +50,13 @@ public class SectorService {
         }).collect(Collectors.toList());
     }
 
+    public void setSectorCropType(String farmId, CropDTO cropDTO) {
+        Farm farm = farmService.getFarmById(farmId);
+        Sector sector = findSectorInFarm(farm, cropDTO.getSectorCode());
+        sector.setCrop(new Crop(cropDTO));
+        farmService.update(farm);
+    }
+
     public void addSensor(String farmId, SensorDTO sensorDTO) {
         Farm farm = farmService.getFarmById(farmId);
         Sector sector = findSectorInFarm(farm, sensorDTO.getSectorCode());
@@ -61,14 +66,6 @@ public class SectorService {
         }
         sensors.add(new Sensor(sensorDTO));
         farmService.update(farm);
-    }
-
-    private Sector findSectorInFarm(Farm farm, String sectorCode) {
-        return farm.getSectors().stream()
-                .filter(s -> s.getCode().equalsIgnoreCase(sectorCode))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("No sector code: [" + sectorCode + "] " +
-                        "in farm id: [" + farm.getId() + "]"));
     }
 
     public void addPlant(String farmId, PlantDTO plantDTO) {
@@ -83,5 +80,13 @@ public class SectorService {
         }
         plants.add(new Plant(plantDTO));
         farmService.update(farm);
+    }
+
+    private Sector findSectorInFarm(Farm farm, String sectorCode) {
+        return farm.getSectors().stream()
+                .filter(s -> s.getCode().equalsIgnoreCase(sectorCode))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No sector code: [" + sectorCode + "] " +
+                        "in farm id: [" + farm.getId() + "]"));
     }
 }

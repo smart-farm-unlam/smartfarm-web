@@ -1,9 +1,6 @@
 package api.smartfarm.controllers;
 
-import api.smartfarm.models.dtos.PlantDTO;
-import api.smartfarm.models.dtos.SectorCropTypesDTO;
-import api.smartfarm.models.dtos.SectorDTO;
-import api.smartfarm.models.dtos.SensorDTO;
+import api.smartfarm.models.dtos.*;
 import api.smartfarm.services.SectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,15 +31,29 @@ public class SectorController {
         return sectorService.getSectorsCropTypes(farmId);
     }
 
+    @PostMapping("/{farmId}/crop-type")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void setSectorCropType(
+            @PathVariable String farmId,
+            @RequestBody CropDTO cropDTO) {
+        sectorService.setSectorCropType(farmId,cropDTO);
+    }
+
     @PostMapping("/{farmId}/sensors")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addSensor(@PathVariable String farmId, SensorDTO sensorDTO) {
+    public void addSensor(
+            @PathVariable String farmId,
+            @RequestBody SensorDTO sensorDTO
+    ) {
         sectorService.addSensor(farmId, sensorDTO);
     }
 
     @PostMapping("/{farmId}/plants")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addPlant(@PathVariable String farmId, PlantDTO plantDTO) {
+    public void addPlant(
+            @PathVariable String farmId,
+            @RequestBody PlantDTO plantDTO
+    ) {
         sectorService.addPlant(farmId, plantDTO);
     }
 }
