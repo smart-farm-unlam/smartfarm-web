@@ -11,5 +11,6 @@ import java.util.List;
 @ToString
 public class SensorDTO {
     private String code;
+    private String sectorCode;
     private List<MeasureDTO> measures;
 }
