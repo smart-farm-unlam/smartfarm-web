@@ -1,5 +1,6 @@
 package api.smartfarm.controllers;
 
+import api.smartfarm.models.dtos.PlantDTO;
 import api.smartfarm.models.dtos.SectorCropTypesDTO;
 import api.smartfarm.models.dtos.SectorDTO;
 import api.smartfarm.models.dtos.SensorDTO;
@@ -37,5 +38,11 @@ public class SectorController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addSensor(@PathVariable String farmId, SensorDTO sensorDTO) {
         sectorService.addSensor(farmId, sensorDTO);
+    }
+
+    @PostMapping("/{farmId}/plants")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addPlant(@PathVariable String farmId, PlantDTO plantDTO) {
+        sectorService.addPlant(farmId, plantDTO);
     }
 }

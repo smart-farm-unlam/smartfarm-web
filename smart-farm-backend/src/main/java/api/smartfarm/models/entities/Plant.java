@@ -1,5 +1,6 @@
 package api.smartfarm.models.entities;
 
+import api.smartfarm.models.dtos.PlantDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,4 +17,8 @@ public class Plant {
     private Integer column;
     private List<String> diagnostics;
 
+    public Plant(PlantDTO plantDTO) {
+        this.row = plantDTO.getRow();
+        this.column = plantDTO.getColumn();
+    }
 }

@@ -2,9 +2,11 @@ package api.smartfarm.services;
 
 import api.smartfarm.models.documents.CropType;
 import api.smartfarm.models.documents.Farm;
+import api.smartfarm.models.dtos.PlantDTO;
 import api.smartfarm.models.dtos.SectorCropTypesDTO;
 import api.smartfarm.models.dtos.SectorDTO;
 import api.smartfarm.models.dtos.SensorDTO;
+import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.exceptions.NotFoundException;
@@ -21,10 +23,9 @@ import java.util.stream.Collectors;
 @Service
 public class SectorService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SectorService.class);
     private final FarmService farmService;
     private final CropTypeDAO cropTypeDAO;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SectorService.class);
 
     @Autowired
     public SectorService(FarmService farmService, CropTypeDAO cropTypeDAO) {
@@ -68,5 +69,19 @@ public class SectorService {
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("No sector code: [" + sectorCode + "] " +
                         "in farm id: [" + farm.getId() + "]"));
+    }
+
+    public void addPlant(String farmId, PlantDTO plantDTO) {
+        Farm farm = farmService.getFarmById(farmId);
+        Sector sector = findSectorInFarm(farm, plantDTO.getSectorCode());
+        if (sector.getCrop() == null) {
+            throw new NotFoundException("No crop assigned to sector: [" + sector.getCode() + "] on farm: [" + farmId + "]");
+        }
+        List<Plant> plants = sector.getCrop().getPlants();
+        if (plants == null) {
+            plants = new ArrayList<>();
+        }
+        plants.add(new Plant(plantDTO));
+        farmService.update(farm);
     }
 }
