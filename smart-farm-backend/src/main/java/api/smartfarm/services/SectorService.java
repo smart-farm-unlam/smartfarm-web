@@ -21,15 +21,13 @@ public class SectorService {
 
     private final FarmService farmService;
     private final CropTypeDAO cropTypeDAO;
-    private final FarmDAO farmDAO;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SectorService.class);
 
     @Autowired
-    public SectorService(FarmService farmService, CropTypeDAO cropTypeDAO, FarmDAO farmDAO) {
+    public SectorService(FarmService farmService, CropTypeDAO cropTypeDAO) {
         this.farmService = farmService;
         this.cropTypeDAO = cropTypeDAO;
-        this.farmDAO = farmDAO;
     }
 
     public List<SectorDTO> getSectors(String farmId) {
@@ -53,10 +51,9 @@ public class SectorService {
 
     public SectorDTO create(String farmId, SectorDTO sectorDTO) {
         Farm farm = farmService.getFarmById(farmId);
-        LOGGER.info("Getting farmId: {} for create sectors", farmId);
+        LOGGER.info("Adding sector {} to farm {}", sectorDTO.getCode(), farmId);
         farm.getSectors().add(new Sector(sectorDTO));
-        farmDAO.save(farm);
-        LOGGER.info("Saved farm {} successfully", farm);
+        farmService.update(farm);
         return sectorDTO;
     }
 
@@ -64,7 +61,7 @@ public class SectorService {
         Farm farm = farmService.getFarmById(farmId);
         LOGGER.info("Getting farmId: {} for create sectors", farmId);
         farm.getSectors().forEach(sector -> {
-            if(sector.getCode().equals(sectorId)){
+            if (sector.getCode().equals(sectorId)) {
                 sector.getSensors().addAll(sectorDTO.getSensors());
                 LOGGER.info("Update add sensors to farm sector {} {} successfully", farm, sectorId);
             }
