@@ -1,6 +1,6 @@
 package api.smartfarm.models.documents;
 
-import api.smartfarm.models.dtos.FarmDTO;
+import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.entities.Crop;
 import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
@@ -23,31 +23,28 @@ public class Farm {
     private String id;
     private String name;
     private String userId;
-
+    private Double length;
+    private Double width;
     private List<Sensor> sensors;
     private List<Sector> sectors;
     private List<String> events;
 
-    public Farm(FarmDTO farmDTO) {
-        this.name = farmDTO.getName();
-        this.userId = farmDTO.getUserId();
+    public Farm(CreateFarmRequestDTO createFarmRequestDTO) {
+        this.name = createFarmRequestDTO.getName();
+        this.userId = createFarmRequestDTO.getUserId();
         this.sensors = new ArrayList<>();
         this.sectors = new ArrayList<>();
         this.events = new ArrayList<>();
     }
 
     public Plant getPlantById(String plantId) {
-        if(sectors!=null){
-            for (Sector sector : sectors) {
-                Crop crop = sector.getCrop();
-                if(crop!=null && crop.getPlants()!=null){
-                    for (Plant plant : crop.getPlants()) {
-                        if(plant.getId().equalsIgnoreCase(plantId)){
-                            return plant;
-                        }
-                    }
+        for (Sector sector : sectors) {
+            Crop crop = sector.getCrop();
+            for (Plant plant : crop.getPlants()) {
+                if (plant.getId().equalsIgnoreCase(plantId)) {
+                    return plant;
                 }
-            }   
+            }
         }
         return null;
     }

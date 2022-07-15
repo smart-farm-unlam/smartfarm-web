@@ -1,4 +1,4 @@
-package api.smartfarm.models.dtos;
+package api.smartfarm.models.dtos.farms;
 
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.entities.Sector;
@@ -8,32 +8,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Null;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FarmDTO {
-    @Null
-    private String id;
-    //@NotEmpty
-    private String name;
-    @NotEmpty
-    private String userId;
+public class FarmResponseDTO {
 
+    private String id;
+    private String name;
+    private String userId;
+    private Double length;
+    private Double width;
     private List<Sensor> sensors;
     private List<Sector> sectors;
-    private List<String> events;
 
-    public FarmDTO(Farm farm) {
+    public FarmResponseDTO(Farm farm) {
         this.id = farm.getId();
         this.name = farm.getName();
         this.userId = farm.getUserId();
+        this.length = farm.getLength();
+        this.width = farm.getWidth();
         this.sensors = farm.getSensors();
         this.sectors = farm.getSectors();
-        this.events = farm.getEvents();
     }
 }

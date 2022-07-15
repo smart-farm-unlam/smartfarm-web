@@ -3,6 +3,7 @@ package api.smartfarm.models.entities;
 import api.smartfarm.models.dtos.SensorDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
 
@@ -10,6 +11,7 @@ import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class Sensor {
 

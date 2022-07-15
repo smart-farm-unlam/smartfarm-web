@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,4 +15,5 @@ public class ApiError {
     private int statusCode;
     private String message;
     private String description;
+    private List<String> errors;
 }

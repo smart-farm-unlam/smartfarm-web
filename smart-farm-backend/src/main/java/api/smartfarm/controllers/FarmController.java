@@ -1,6 +1,8 @@
 package api.smartfarm.controllers;
 
-import api.smartfarm.models.dtos.FarmDTO;
+import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
+import api.smartfarm.models.dtos.farms.FarmResponseDTO;
+import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
 import api.smartfarm.services.FarmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,13 +24,22 @@ public class FarmController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FarmDTO create(@Valid @RequestBody FarmDTO farm) {
+    public FarmResponseDTO create(@Valid @RequestBody CreateFarmRequestDTO farm) {
         return farmService.create(farm);
     }
 
     @GetMapping("/{id}")
-    public FarmDTO getById(@PathVariable String id) {
+    public FarmResponseDTO getById(@PathVariable String id) {
         return farmService.getById(id);
+    }
+
+    @PutMapping("/{id}/init")
+    @ResponseStatus(HttpStatus.OK)
+    public void initFarm(
+        @PathVariable String id,
+        @Valid @RequestBody InitFarmRequestDTO initRequest
+    ) {
+        farmService.initFarm(id, initRequest);
     }
 
 }
