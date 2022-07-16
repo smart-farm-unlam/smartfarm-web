@@ -20,7 +20,7 @@ public class Crop {
     public Crop(CropDTO cropDTO) {
         this.type = cropDTO.getType();
         this.plants = new ArrayList<>();
-        createPlants(cropDTO.getPlantsNbr(), cropDTO.getSectorCode());
+        createPlants(cropDTO.getPlantsCount(), cropDTO.getSectorCode());
     }
 
     private void createPlants(Integer plantsNbr, String sectorCode) {

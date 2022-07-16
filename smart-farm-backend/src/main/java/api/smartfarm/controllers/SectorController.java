@@ -44,7 +44,7 @@ public class SectorController {
     }
 
     @PostMapping("/{farmId}/set_crops")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public void setSectorsCropType(
             @PathVariable String farmId,
             @RequestBody List<CropDTO> cropDTOS) {
@@ -52,7 +52,7 @@ public class SectorController {
     }
 
     @PostMapping("/{farmId}/sensors")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public void addSensor(
             @PathVariable String farmId,
             @RequestBody List<SensorDTO> sensorDTOS
@@ -61,7 +61,7 @@ public class SectorController {
     }
 
     @PostMapping("/{farmId}/plants")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public void addPlant(
             @PathVariable String farmId,
             @RequestBody List<PlantDTO> plantDTOS
