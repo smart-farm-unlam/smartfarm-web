@@ -111,7 +111,17 @@ public class SectorService {
             sensors = new ArrayList<>();
             sector.setSensors(sensors);
         }
-        sensors.add(new Sensor(sensorRequestDTO));
+
+        Sensor sensor = farm.getSensors().stream()
+            .filter(s -> s.getCode().equalsIgnoreCase(sensorRequestDTO.getCode()))
+            .findFirst()
+            .orElse(null);
+
+        if(sensor != null) {
+            sensors.add(sensor);
+        } else {
+            sensors.add(new Sensor(sensorRequestDTO));
+        }
         farmService.update(farm);
     }
 
