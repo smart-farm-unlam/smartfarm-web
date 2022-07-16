@@ -1,5 +1,6 @@
-package api.smartfarm.models.dtos;
+package api.smartfarm.models.dtos.sensors;
 
+import api.smartfarm.models.dtos.MeasureDTO;
 import lombok.*;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SensorDTO {
+public class SensorRequestDTO {
     private String code;
     private String sectorCode;
     private List<MeasureDTO> measures;

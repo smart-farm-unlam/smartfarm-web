@@ -2,7 +2,12 @@ package api.smartfarm.services;
 
 import api.smartfarm.models.documents.CropType;
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.dtos.*;
+import api.smartfarm.models.dtos.CropDTO;
+import api.smartfarm.models.dtos.PlantDTO;
+import api.smartfarm.models.dtos.sectors.AddSectorRequestDTO;
+import api.smartfarm.models.dtos.sectors.SectorCropTypesDTO;
+import api.smartfarm.models.dtos.sectors.SectorResponseDTO;
+import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.models.entities.Crop;
 import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
@@ -32,10 +37,10 @@ public class SectorService {
         this.cropTypeDAO = cropTypeDAO;
     }
 
-    public List<SectorDTO> getSectors(String farmId) {
+    public List<SectorResponseDTO> getSectors(String farmId) {
         Farm farm = farmService.getFarmById(farmId);
         LOGGER.info("Getting sectors from farmId: {}", farmId);
-        return farm.getSectors().stream().map(SectorDTO::new).collect(Collectors.toList());
+        return farm.getSectors().stream().map(SectorResponseDTO::new).collect(Collectors.toList());
     }
 
     public List<SectorCropTypesDTO> getSectorsCropTypes(String farmId) {
@@ -51,60 +56,71 @@ public class SectorService {
         }).collect(Collectors.toList());
     }
 
-    public SectorDTO create(String farmId, SectorDTO sectorDTO) {
+    public SectorResponseDTO addSector(String farmId, AddSectorRequestDTO sectorRequestDTO) {
+        CropType cropType = getCropType(sectorRequestDTO.getCropType());
+
         Farm farm = farmService.getFarmById(farmId);
-        LOGGER.info("Adding sector {} to farm {}", sectorDTO.getCode(), farmId);
-        farm.getSectors().add(new Sector(sectorDTO));
+        List<Sector> sectors = farm.getSectors();
+        String sectorCode = "S";
+
+        int row = 0;
+        int column = 0;
+        if (sectors == null) {
+            sectors = new ArrayList<>();
+            sectorCode = sectorCode.concat("1");
+        } else {
+            sectorCode += String.valueOf(sectors.size() + 1);
+            column = sectors.size();
+        }
+
+        Sector newSector = new Sector(sectorCode, cropType.getId(), row, column);
+
+        for (int i = 0; i < sectorRequestDTO.getPlantsCount(); i++) {
+            Plant plant = new Plant();
+            plant.createPlantId((i + 1), sectorCode);
+            newSector.getCrop().getPlants().add(plant);
+        }
+
+        sectors.add(newSector);
         farmService.update(farm);
-        return sectorDTO;
+        return new SectorResponseDTO(newSector);
     }
 
-    public SectorDTO update(String farmId, String sectorId, SectorDTO sectorDTO) {
-        Farm farm = farmService.getFarmById(farmId);
-        LOGGER.info("Getting farmId: {} for create sectors", farmId);
-        farm.getSectors().forEach(sector -> {
-            if (sector.getCode().equals(sectorId)) {
-                sector.getSensors().addAll(sectorDTO.getSensors());
-                LOGGER.info("Update add sensors to farm sector {} {} successfully", farm, sectorId);
-            }
-        });
-        return sectorDTO;
-    }
 
-    public void setSectorsCropType(String farmId, List<CropDTO> cropDTOS) {
+    public void updateSectorsCropTypes(String farmId, List<CropDTO> cropDTOS) {
         Farm farm = farmService.getFarmById(farmId);
-        cropDTOS.forEach(cropDTO -> setSectorCropType(farm,cropDTO));
+        cropDTOS.forEach(cropDTO -> setSectorCropType(farm, cropDTO));
     }
 
     public void setSectorCropType(Farm farm, CropDTO cropDTO) {
-        getCropTypeById(cropDTO.getType()); //Just for validation
+        getCropType(cropDTO.getType());
         Sector sector = findSectorInFarm(farm, cropDTO.getSectorCode());
         sector.setCrop(new Crop(cropDTO));
         farmService.update(farm);
     }
 
-    public void addSensors(String farmId, List<SensorDTO> sensorDTOS) {
+    public void addSensors(String farmId, List<SensorRequestDTO> sensorRequestDTOS) {
         Farm farm = farmService.getFarmById(farmId);
-        sensorDTOS.forEach(sensorDTO -> addSensor(farm,sensorDTO));
+        sensorRequestDTOS.forEach(sensorDTO -> addSensor(farm, sensorDTO));
     }
 
-    public void addSensor(Farm farm, SensorDTO sensorDTO) {
-        Sector sector = findSectorInFarm(farm, sensorDTO.getSectorCode());
+    private void addSensor(Farm farm, SensorRequestDTO sensorRequestDTO) {
+        Sector sector = findSectorInFarm(farm, sensorRequestDTO.getSectorCode());
         List<Sensor> sensors = sector.getSensors();
         if (sensors == null) {
             sensors = new ArrayList<>();
             sector.setSensors(sensors);
         }
-        sensors.add(new Sensor(sensorDTO));
+        sensors.add(new Sensor(sensorRequestDTO));
         farmService.update(farm);
     }
 
     public void addPlants(String farmId, List<PlantDTO> plantDTOS) {
         Farm farm = farmService.getFarmById(farmId);
-        plantDTOS.forEach(plantDTO -> addPlant(farm,plantDTO));
+        plantDTOS.forEach(plantDTO -> addPlant(farm, plantDTO));
     }
 
-    public void addPlant(Farm farm, PlantDTO plantDTO) {
+    private void addPlant(Farm farm, PlantDTO plantDTO) {
         Sector sector = findSectorInFarm(farm, plantDTO.getSectorCode());
         if (sector.getCrop() == null) {
             throw new NotFoundException("No crop assigned to sector: [" + sector.getCode() + "] on farm: [" + farm.getId() + "]");
@@ -115,22 +131,21 @@ public class SectorService {
             sector.getCrop().setPlants(plants);
         }
         Plant plant = new Plant(plantDTO);
-        plant.createPlantId(plants.size()+1, sector.getCode());
+        plant.createPlantId(plants.size() + 1, sector.getCode());
         plants.add(plant);
         farmService.update(farm);
     }
 
     private Sector findSectorInFarm(Farm farm, String sectorCode) {
         return farm.getSectors().stream()
-                .filter(s -> s.getCode().equalsIgnoreCase(sectorCode))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("No sector code: [" + sectorCode + "] " +
-                        "in farm id: [" + farm.getId() + "]"));
+            .filter(s -> s.getCode().equalsIgnoreCase(sectorCode))
+            .findFirst()
+            .orElseThrow(
+                () -> new NotFoundException("No sector code: " + sectorCode + " in farm id: " + farm.getId())
+            );
     }
 
-    private CropType getCropTypeById(String id) {
-        return cropTypeDAO.findById(id).orElseThrow(
-                () -> new NotFoundException("Crop type: " + id + " not found in database")
-        );
+    private CropType getCropType(String id) {
+        return cropTypeDAO.findById(id).orElseThrow(() -> new NotFoundException("Crop type: " + id + " not found in database"));
     }
 }

@@ -1,8 +1,8 @@
 package api.smartfarm.models.entities;
 
-import api.smartfarm.models.dtos.SectorDTO;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,11 +17,12 @@ public class Sector {
     private Crop crop;
     private List<Sensor> sensors;
 
-    public Sector(SectorDTO sectorDTO) {
-        this.code = sectorDTO.getCode();
-        this.row = sectorDTO.getRow();
-        this.column = sectorDTO.getColumn();
-        this.crop = sectorDTO.getCrop();
-        this.sensors = sectorDTO.getSensors();
+    public Sector(String code, String cropType, int row, int column) {
+        this.code = code;
+        this.row = row;
+        this.column = column;
+        this.crop = new Crop(cropType);
+        this.sensors = new ArrayList<>();
     }
+
 }

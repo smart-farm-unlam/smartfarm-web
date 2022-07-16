@@ -10,5 +10,5 @@ import lombok.Setter;
 public class CropDTO {
     private String type;
     private String sectorCode;
-    private Integer plantsCount;
+    private int plantsCount;
 }

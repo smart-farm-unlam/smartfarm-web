@@ -1,4 +1,4 @@
-package api.smartfarm.models.dtos;
+package api.smartfarm.models.dtos.sectors;
 
 import api.smartfarm.models.documents.CropType;
 import api.smartfarm.models.entities.Sector;

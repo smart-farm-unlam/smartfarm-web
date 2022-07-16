@@ -1,4 +1,4 @@
-package api.smartfarm.models.dtos;
+package api.smartfarm.models.dtos.sectors;
 
 import api.smartfarm.models.entities.Crop;
 import api.smartfarm.models.entities.Sector;
@@ -14,14 +14,14 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @ToString
-public class SectorDTO {
+public class SectorResponseDTO {
     private String code;
     private Integer row;
     private Integer column;
     private Crop crop;
     private List<Sensor> sensors;
 
-    public SectorDTO(Sector sector) {
+    public SectorResponseDTO(Sector sector) {
         this.code = sector.getCode();
         this.row = sector.getRow();
         this.column = sector.getColumn();

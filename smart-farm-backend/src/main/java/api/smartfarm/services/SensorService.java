@@ -1,7 +1,7 @@
 package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.dtos.SensorDTO;
+import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.models.entities.Measure;
 import api.smartfarm.models.entities.Sensor;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ public class SensorService {
         this.farmService = farmService;
     }
 
-    public void handleMeasures(String farmId, List<SensorDTO> sensorData) {
+    public void handleMeasures(String farmId, List<SensorRequestDTO> sensorData) {
         Farm farm = farmService.getFarmById(farmId);
 
         LOGGER.info("Sensors Data received: {}", sensorData);
@@ -33,7 +33,7 @@ public class SensorService {
             .flatMap(s -> s.getSensors().stream())
             .collect(Collectors.toList());
 
-        for (SensorDTO sd : sensorData) {
+        for (SensorRequestDTO sd : sensorData) {
             String code = sd.getCode();
             Measure lastMeasure = sd.getMeasures().stream().findFirst().map(Measure::new).orElse(null);
 

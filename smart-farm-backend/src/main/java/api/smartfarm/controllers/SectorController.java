@@ -1,11 +1,16 @@
 package api.smartfarm.controllers;
 
 import api.smartfarm.models.dtos.*;
+import api.smartfarm.models.dtos.sectors.AddSectorRequestDTO;
+import api.smartfarm.models.dtos.sectors.SectorCropTypesDTO;
+import api.smartfarm.models.dtos.sectors.SectorResponseDTO;
+import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.services.SectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +26,7 @@ public class SectorController {
     }
 
     @GetMapping("/{farmId}")
-    public List<SectorDTO> getSectors(@PathVariable String farmId) {
+    public List<SectorResponseDTO> getSectors(@PathVariable String farmId) {
         return sectorService.getSectors(farmId);
     }
 
@@ -32,39 +37,37 @@ public class SectorController {
     }
 
     @PostMapping("/{farmId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public SectorDTO create(@PathVariable String farmId, @RequestBody SectorDTO sectorDTO) {
-        return sectorService.create(farmId, sectorDTO);
-    }
-
-    @PutMapping("/{farmId}/{sectorId}")
     @ResponseStatus(HttpStatus.OK)
-    public SectorDTO update(@PathVariable String farmId, @PathVariable String sectorId, @RequestBody SectorDTO sectorDTO) {
-        return sectorService.update(farmId, sectorId, sectorDTO);
+    public SectorResponseDTO addSector(
+        @PathVariable String farmId,
+        @Valid @RequestBody AddSectorRequestDTO addSectorRequest
+    ) {
+        return sectorService.addSector(farmId, addSectorRequest);
     }
 
     @PostMapping("/{farmId}/set_crops")
     @ResponseStatus(HttpStatus.OK)
-    public void setSectorsCropType(
-            @PathVariable String farmId,
-            @RequestBody List<CropDTO> cropDTOS) {
-        sectorService.setSectorsCropType(farmId,cropDTOS);
+    public void updateSectorsCropTypes(
+        @PathVariable String farmId,
+        @RequestBody List<CropDTO> cropDTOS
+    ) {
+        sectorService.updateSectorsCropTypes(farmId, cropDTOS);
     }
 
     @PostMapping("/{farmId}/sensors")
     @ResponseStatus(HttpStatus.OK)
     public void addSensor(
-            @PathVariable String farmId,
-            @RequestBody List<SensorDTO> sensorDTOS
+        @PathVariable String farmId,
+        @RequestBody List<SensorRequestDTO> sensorRequestDTOS
     ) {
-        sectorService.addSensors(farmId, sensorDTOS);
+        sectorService.addSensors(farmId, sensorRequestDTOS);
     }
 
     @PostMapping("/{farmId}/plants")
     @ResponseStatus(HttpStatus.OK)
     public void addPlant(
-            @PathVariable String farmId,
-            @RequestBody List<PlantDTO> plantDTOS
+        @PathVariable String farmId,
+        @RequestBody List<PlantDTO> plantDTOS
     ) {
         sectorService.addPlants(farmId, plantDTOS);
     }

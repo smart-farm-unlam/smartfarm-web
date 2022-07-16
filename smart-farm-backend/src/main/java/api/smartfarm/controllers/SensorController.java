@@ -1,6 +1,6 @@
 package api.smartfarm.controllers;
 
-import api.smartfarm.models.dtos.SensorDTO;
+import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.services.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class SensorController {
     @ResponseStatus(HttpStatus.OK)
     public void sensorData(
         @PathVariable String farmId,
-        @RequestBody List<SensorDTO> sensorsData
+        @RequestBody List<SensorRequestDTO> sensorsData
     ) {
         sensorService.handleMeasures(farmId, sensorsData);
     }

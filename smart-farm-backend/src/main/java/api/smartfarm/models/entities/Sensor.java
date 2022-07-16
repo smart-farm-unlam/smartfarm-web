@@ -1,7 +1,7 @@
 package api.smartfarm.models.entities;
 
 import api.smartfarm.models.dtos.MeasureDTO;
-import api.smartfarm.models.dtos.SensorDTO;
+import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,10 +25,10 @@ public class Sensor {
     private SensorStatus status;
     private Measure lastMeasure;
 
-    public Sensor(SensorDTO sensorDTO) {
-        this.code = sensorDTO.getCode();
+    public Sensor(SensorRequestDTO sensorRequestDTO) {
+        this.code = sensorRequestDTO.getCode();
         buildSensorType();
-        List<MeasureDTO> measuresDTO = sensorDTO.getMeasures();
+        List<MeasureDTO> measuresDTO = sensorRequestDTO.getMeasures();
         if (measuresDTO != null) {
             this.lastMeasure = measuresDTO.stream().findFirst().map(Measure::new).orElse(null);
         }
