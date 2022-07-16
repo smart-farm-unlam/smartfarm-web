@@ -119,6 +119,7 @@ public class SectorService {
 
         if(sensor != null) {
             sensors.add(sensor);
+            farm.getSensors().remove(sensor);
         } else {
             sensors.add(new Sensor(sensorRequestDTO));
         }
