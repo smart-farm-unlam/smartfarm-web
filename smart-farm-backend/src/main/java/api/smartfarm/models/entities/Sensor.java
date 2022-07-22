@@ -18,32 +18,34 @@ import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 @AllArgsConstructor
 public class Sensor {
 
-    @Transient
-    private static final Double ERROR_VALUE = -99.0;
     private String code;
     private SensorTypeId sensorTypeId;
     private SensorStatus status;
     private Measure lastMeasure;
 
+    @Transient
+    private static final Double ERROR_VALUE = -99.0;
+
     public Sensor(SensorRequestDTO sensorRequestDTO) {
         this.code = sensorRequestDTO.getCode();
-        buildSensorType();
+        this.sensorTypeId = resolveSensorTypeId();
         List<MeasureDTO> measuresDTO = sensorRequestDTO.getMeasures();
         if (measuresDTO != null) {
             this.lastMeasure = measuresDTO.stream().findFirst().map(Measure::new).orElse(null);
         }
-        this.resolveSensorStatus();
+        this.status = resolveSensorStatus();
     }
 
-    private void buildSensorType() {
-        this.sensorTypeId = SensorTypeId.valueOf(code.substring(0, 2).toUpperCase());
+    private SensorTypeId resolveSensorTypeId() {
+        return SensorTypeId.valueOf(code.substring(0, 2).toUpperCase());
     }
 
-    public void resolveSensorStatus() {
-        this.status = SensorStatus.OFF;
+    public SensorStatus resolveSensorStatus() {
+        SensorStatus statusResponse = SensorStatus.OFF;
         if (lastMeasure != null && lastMeasure.getValue() != null) {
-            this.status = (lastMeasure.getValue().equals(ERROR_VALUE))
-                    ? SensorStatus.FAIL : SensorStatus.ON;
+            statusResponse = (lastMeasure.getValue().equals(ERROR_VALUE))
+                ? SensorStatus.FAIL : SensorStatus.ON;
         }
+        return statusResponse;
     }
 }
