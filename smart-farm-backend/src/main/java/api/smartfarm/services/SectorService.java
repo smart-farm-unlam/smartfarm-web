@@ -109,7 +109,6 @@ public class SectorService {
         List<Sensor> sensors = sector.getSensors();
         if (sensors == null) {
             sensors = new ArrayList<>();
-            sector.setSensors(sensors);
         }
 
         Sensor sensor = farm.getSensors().stream()

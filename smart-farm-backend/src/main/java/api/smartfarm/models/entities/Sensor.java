@@ -1,14 +1,11 @@
 package api.smartfarm.models.entities;
 
-import api.smartfarm.models.dtos.MeasureDTO;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
-
-import java.util.List;
 
 import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 
@@ -29,10 +26,8 @@ public class Sensor {
     public Sensor(SensorRequestDTO sensorRequestDTO) {
         this.code = sensorRequestDTO.getCode();
         this.sensorTypeId = resolveSensorTypeId();
-        List<MeasureDTO> measuresDTO = sensorRequestDTO.getMeasures();
-        if (measuresDTO != null) {
-            this.lastMeasure = measuresDTO.stream().findFirst().map(Measure::new).orElse(null);
-        }
+        this.lastMeasure = (sensorRequestDTO.getMeasure() != null) ?
+            new Measure(sensorRequestDTO.getMeasure()) : null;
         this.status = resolveSensorStatus();
     }
 
@@ -43,8 +38,7 @@ public class Sensor {
     public SensorStatus resolveSensorStatus() {
         SensorStatus statusResponse = SensorStatus.OFF;
         if (lastMeasure != null && lastMeasure.getValue() != null) {
-            statusResponse = (lastMeasure.getValue().equals(ERROR_VALUE))
-                ? SensorStatus.FAIL : SensorStatus.ON;
+            statusResponse = (lastMeasure.getValue().equals(ERROR_VALUE)) ? SensorStatus.FAIL : SensorStatus.ON;
         }
         return statusResponse;
     }

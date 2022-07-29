@@ -35,7 +35,7 @@ public class SensorService {
 
         for (SensorRequestDTO sd : sensorData) {
             String code = sd.getCode();
-            Measure lastMeasure = sd.getMeasures().stream().findFirst().map(Measure::new).orElse(null);
+            Measure lastMeasure = new Measure(sd.getMeasure());
 
             Sensor sensor = sensors.stream()
                 .filter(s -> s.getCode().equals(code))
@@ -44,7 +44,7 @@ public class SensorService {
 
             if (sensor != null) {
                 sensor.setLastMeasure(lastMeasure);
-                sensor.resolveSensorStatus();
+                sensor.setStatus(sensor.resolveSensorStatus());
             } else {
                 sensor = sectorsSensors.stream()
                     .filter(ss -> ss.getCode().equals(code))
@@ -53,7 +53,7 @@ public class SensorService {
 
                 if (sensor != null) {
                     sensor.setLastMeasure(lastMeasure);
-                    sensor.resolveSensorStatus();
+                    sensor.setStatus(sensor.resolveSensorStatus());
                 } else {
                     sensors.add(new Sensor(sd));
                 }
