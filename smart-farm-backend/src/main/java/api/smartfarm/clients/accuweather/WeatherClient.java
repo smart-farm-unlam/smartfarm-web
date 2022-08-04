@@ -79,7 +79,7 @@ public class WeatherClient {
         } catch (HttpServerErrorException.ServiceUnavailable e) {
             throw new LimitReachException(e.getMessage());
         } catch (Exception e) {
-            LOGGER.error("Failed to obtain location data from AccuWeather");
+            LOGGER.error("Failed to obtain location data from Weather Client");
         }
 
         return locationData;
