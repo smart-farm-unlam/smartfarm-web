@@ -1,4 +1,4 @@
-package api.smartfarm.clients.accuweather.model;
+package api.smartfarm.clients.weather.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

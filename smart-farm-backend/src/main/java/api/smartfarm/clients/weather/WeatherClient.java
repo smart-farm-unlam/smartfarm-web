@@ -1,7 +1,7 @@
-package api.smartfarm.clients.accuweather;
+package api.smartfarm.clients.weather;
 
-import api.smartfarm.clients.accuweather.model.LocationData;
-import api.smartfarm.clients.accuweather.model.WeatherData;
+import api.smartfarm.clients.weather.model.LocationData;
+import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.exceptions.FailedDependencyException;
 import api.smartfarm.models.exceptions.LimitReachException;
 import lombok.NonNull;

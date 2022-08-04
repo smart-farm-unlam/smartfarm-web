@@ -1,8 +1,8 @@
 package api.smartfarm.services;
 
-import api.smartfarm.clients.accuweather.WeatherClient;
-import api.smartfarm.clients.accuweather.model.LocationData;
-import api.smartfarm.clients.accuweather.model.WeatherData;
+import api.smartfarm.clients.weather.WeatherClient;
+import api.smartfarm.clients.weather.model.LocationData;
+import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.SensorType;
 import api.smartfarm.models.documents.User;

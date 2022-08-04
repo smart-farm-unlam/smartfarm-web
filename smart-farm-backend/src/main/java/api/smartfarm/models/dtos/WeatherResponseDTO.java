@@ -1,6 +1,6 @@
 package api.smartfarm.models.dtos;
 
-import api.smartfarm.clients.accuweather.model.WeatherData;
+import api.smartfarm.clients.weather.model.WeatherData;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
