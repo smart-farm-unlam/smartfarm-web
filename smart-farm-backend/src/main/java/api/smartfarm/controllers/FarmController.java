@@ -1,5 +1,6 @@
 package api.smartfarm.controllers;
 
+import api.smartfarm.models.dtos.WeatherResponseDTO;
 import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
@@ -40,6 +41,11 @@ public class FarmController {
         @Valid @RequestBody InitFarmRequestDTO initRequest
     ) {
         farmService.initFarm(id, initRequest);
+    }
+
+    @GetMapping("/{id}/weather")
+    public WeatherResponseDTO weather(@PathVariable String id) {
+        return farmService.getWeather(id);
     }
 
 }

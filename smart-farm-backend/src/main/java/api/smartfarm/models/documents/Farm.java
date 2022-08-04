@@ -28,6 +28,9 @@ public class Farm {
     private List<Sensor> sensors;
     private List<Sector> sectors;
     private List<String> events;
+    private Double latitude;
+    private Double longitude;
+    private String locationKey;
 
     public Farm(CreateFarmRequestDTO createFarmRequestDTO) {
         this.name = createFarmRequestDTO.getName();
