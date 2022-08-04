@@ -1,7 +1,12 @@
 package api.smartfarm.services;
 
+import api.smartfarm.clients.weather.WeatherClient;
+import api.smartfarm.clients.weather.model.LocationData;
+import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.documents.Farm;
+import api.smartfarm.models.documents.SensorType;
 import api.smartfarm.models.documents.User;
+import api.smartfarm.models.dtos.WeatherResponseDTO;
 import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
@@ -21,13 +26,15 @@ public class FarmService {
 
     private final FarmDAO farmDAO;
     private final UserDAO userDAO;
+    private final WeatherClient weatherClient;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FarmService.class);
 
     @Autowired
-    public FarmService(FarmDAO farmDAO, UserDAO userDAO) {
+    public FarmService(FarmDAO farmDAO, UserDAO userDAO, WeatherClient weatherClient) {
         this.farmDAO = farmDAO;
         this.userDAO = userDAO;
+        this.weatherClient = weatherClient;
     }
 
     public FarmResponseDTO create(CreateFarmRequestDTO createFarmRequestDTO) {
@@ -70,8 +77,17 @@ public class FarmService {
         Farm farm = getFarmById(id);
         farm.setLength(initRequest.getLength());
         farm.setWidth(initRequest.getWidth());
-        update(farm);
 
+        Double latitude = initRequest.getLatitude();
+        Double longitude = initRequest.getLongitude();
+        farm.setLatitude(latitude);
+        farm.setLongitude(longitude);
+
+        //Get location position from weatherClient
+        LocationData locationData = weatherClient.geoPositionLocation(latitude, longitude);
+        farm.setLocationKey(locationData.getKey());
+
+        update(farm);
         LOGGER.info("Farm initialized successfully: {}", farm);
     }
 
@@ -83,7 +99,31 @@ public class FarmService {
         farm.setSensors(new ArrayList<>());
         farm.setSectors(new ArrayList<>());
         farm.setEvents(new ArrayList<>());
+        farm.setLatitude(null);
+        farm.setLongitude(null);
+        farm.setLocationKey(null);
+
         update(farm);
+    }
+
+    public WeatherResponseDTO getWeather(String id) {
+        Farm farm = getFarmById(id);
+
+        WeatherData weatherData = weatherClient.getCurrentWeatherConditions(farm.getLocationKey());
+
+        String temperature = farm.getSensors().stream()
+            .filter(it -> it.getSensorTypeId().equals(SensorType.SensorTypeId.AT))
+            .findFirst()
+            .map(it -> it.getLastMeasure().getValue() + "°C")
+            .orElse(null);
+
+        String humidity = farm.getSensors().stream()
+            .filter(it -> it.getSensorTypeId().equals(SensorType.SensorTypeId.AH))
+            .findFirst()
+            .map(it -> it.getLastMeasure().getValue() + "%")
+            .orElse(null);
+
+        return new WeatherResponseDTO(weatherData, temperature, humidity);
     }
 
 }

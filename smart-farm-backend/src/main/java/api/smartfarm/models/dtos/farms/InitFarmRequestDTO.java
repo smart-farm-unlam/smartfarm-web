@@ -16,4 +16,8 @@ public class InitFarmRequestDTO {
     private Double length;
     @NotNull
     private Double width;
+    @NotNull
+    private Double latitude;
+    @NotNull
+    private Double longitude;
 }
