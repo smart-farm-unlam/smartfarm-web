@@ -46,4 +46,9 @@ public class EventsController {
         return eventService.getEvents(farmId);
     }
 
+    @GetMapping("/{farmId}/{eventId}")
+    public List<Event> getHistoryEvent(@PathVariable String farmId, @PathVariable String eventId) {
+        return eventService.getHistoryEvent(farmId, eventId);
+    }
+
 }

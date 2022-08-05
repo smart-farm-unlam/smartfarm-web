@@ -87,4 +87,9 @@ public class EventService {
         eventListDTO.getIrrigationEvents().forEach(event -> registerEvent(farmId, event));
         eventListDTO.getAntiFrostEvents().forEach(event -> registerEvent(farmId, event));
     }
+
+    public List<Event> getHistoryEvent(String farmId, String eventId) {
+        LOGGER.info("Getting events by farmId {}", farmId);
+        return eventDAO.findEventHistoryByFarmIdAndEventID(farmId, eventId);
+    }
 }
