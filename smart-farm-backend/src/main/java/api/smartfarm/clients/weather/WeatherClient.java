@@ -7,19 +7,16 @@ import api.smartfarm.models.exceptions.LimitReachException;
 import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-@Component
 public class WeatherClient {
 
     @Value("${accuweather.api.host}")
@@ -33,6 +30,10 @@ public class WeatherClient {
 
     private final RestTemplate restTemplate;
 
+    public WeatherClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     private static final String GEO_POSITION_URL = "%s/locations/v1/cities/geoposition/search?" +
         "apikey=%s&q=%s,%s&language=es-ar&details=false&toplevel=true";
 
@@ -45,11 +46,6 @@ public class WeatherClient {
     private static final ParameterizedTypeReference<List<WeatherData>> WEATHER_DATA_RESPONSE =
         new ParameterizedTypeReference<List<WeatherData>>() {
         };
-
-    @Autowired
-    public WeatherClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     public LocationData geoPositionLocation(Double latitude, Double longitude) {
         LocationData locationData;

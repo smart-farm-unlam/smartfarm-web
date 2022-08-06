@@ -1,4 +1,4 @@
-package api.smartfarm.http;
+package api.smartfarm.http.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
