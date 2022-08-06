@@ -15,4 +15,13 @@ public interface EventDAO extends MongoRepository<Event, String> {
     Optional<Event> findLastEventByFarmAndSectorAndEventType(String farmId, String sectorId, String eventType);
 
     List<Event> findByFarmId(String farmId);
+
+    @Query("{ 'farmId': ?0, 'eventType': ?1, 'sectorId': ?2 }")
+    List<Event> findEventsByFarmIdAndEventTypeAndSectorId(String farmId, String eventType, String sectorId);
+
+    @Query("{ 'farmId': ?0, 'eventType': ?1 }")
+    List<Event> findEventsByFarmIdAndEventType(String farmId, String eventType);
+
+    @Query("{ 'farmId': ?0, 'sectorId': ?1 }")
+    List<Event> findByFarmIdAndSectorId(String farmId, String sectorId);
 }

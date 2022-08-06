@@ -29,10 +29,10 @@ public class EventService {
 
     @Autowired
     public EventService(
-        List<EventResolver> eventsResolvers,
-        EventDAO eventDAO,
-        EventTypeDAO eventTypeDAO,
-        FarmService farmService
+            List<EventResolver> eventsResolvers,
+            EventDAO eventDAO,
+            EventTypeDAO eventTypeDAO,
+            FarmService farmService
     ) {
         this.eventsResolvers = eventsResolvers;
         this.eventDAO = eventDAO;
@@ -40,8 +40,15 @@ public class EventService {
         this.farmService = farmService;
     }
 
-    public List<Event> getEvents(String farmId) {
+    public List<Event> getEvents(String farmId, String eventType, String sectorId) {
         LOGGER.info("Getting events by farmId {}", farmId);
+        if (eventType != null && sectorId != null) {
+            return eventDAO.findEventsByFarmIdAndEventTypeAndSectorId(farmId, eventType, sectorId);
+        } else if (eventType != null) {
+            return eventDAO.findEventsByFarmIdAndEventType(farmId, eventType);
+        } else if (sectorId != null) {
+            return eventDAO.findByFarmIdAndSectorId(farmId, sectorId);
+        }
         return eventDAO.findByFarmId(farmId);
     }
 
@@ -50,9 +57,9 @@ public class EventService {
 
         LOGGER.info("Event received: {}", eventDTO);
         EventResolver eventResolver = eventsResolvers.stream()
-            .filter(r -> r.apply(eventType.getId()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Event type " + eventType.getId() + " not supported"));
+                .filter(r -> r.apply(eventType.getId()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Event type " + eventType.getId() + " not supported"));
 
         Event event = eventResolver.mapEvent(eventDTO, eventType);
         handleEvent(event, farmId, eventResolver);
@@ -79,7 +86,7 @@ public class EventService {
 
     private EventType getEventTypeById(String id) {
         return eventTypeDAO.findById(id).orElseThrow(
-            () -> new NotFoundException("Event type: " + id + " not found in database")
+                () -> new NotFoundException("Event type: " + id + " not found in database")
         );
     }
 
