@@ -21,4 +21,9 @@ public class CropType {
     private Double m2;
     private List<CropParameter> parameters;
 
+    private OptimalEnvironment optimalEnvironment;
+    private String plantation;
+    private String properties;
+    private String faq;
+    private String harvest;
 }
