@@ -4,13 +4,15 @@ import api.smartfarm.clients.weather.WeatherClient;
 import api.smartfarm.clients.weather.model.LocationData;
 import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.documents.SensorType;
 import api.smartfarm.models.documents.User;
 import api.smartfarm.models.dtos.WeatherResponseDTO;
 import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
+import api.smartfarm.models.dtos.farms.UpdateFarmRequestDTO;
+import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.exceptions.NotFoundException;
+import api.smartfarm.repositories.EventDAO;
 import api.smartfarm.repositories.FarmDAO;
 import api.smartfarm.repositories.UserDAO;
 import org.slf4j.Logger;
@@ -19,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FarmService {
@@ -27,14 +31,21 @@ public class FarmService {
     private final FarmDAO farmDAO;
     private final UserDAO userDAO;
     private final WeatherClient weatherClient;
+    private final EventDAO eventDAO;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FarmService.class);
 
     @Autowired
-    public FarmService(FarmDAO farmDAO, UserDAO userDAO, WeatherClient weatherClient) {
+    public FarmService(
+        FarmDAO farmDAO,
+        UserDAO userDAO,
+        WeatherClient weatherClient,
+        EventDAO eventDAO
+    ) {
         this.farmDAO = farmDAO;
         this.userDAO = userDAO;
         this.weatherClient = weatherClient;
+        this.eventDAO = eventDAO;
     }
 
     public FarmResponseDTO create(CreateFarmRequestDTO createFarmRequestDTO) {
@@ -58,6 +69,16 @@ public class FarmService {
         return new FarmResponseDTO(farm);
     }
 
+    public FarmResponseDTO update(String id, UpdateFarmRequestDTO updateRequest) {
+        Farm farm = getFarmById(id);
+        setLocation(farm, updateRequest.getLatitude(), updateRequest.getLongitude());
+
+        //Update farm
+        update(farm);
+
+        return new FarmResponseDTO(farm);
+    }
+
     public Farm getFarmById(String id) {
         LOGGER.info("Getting farm with id {}", id);
         return farmDAO.findById(id).orElseThrow(() -> {
@@ -78,14 +99,7 @@ public class FarmService {
         farm.setLength(initRequest.getLength());
         farm.setWidth(initRequest.getWidth());
 
-        Double latitude = initRequest.getLatitude();
-        Double longitude = initRequest.getLongitude();
-        farm.setLatitude(latitude);
-        farm.setLongitude(longitude);
-
-        //Get location position from weatherClient
-        LocationData locationData = weatherClient.geoPositionLocation(latitude, longitude);
-        farm.setLocationKey(locationData.getKey());
+        setLocation(farm, initRequest.getLatitude(), initRequest.getLongitude());
 
         update(farm);
         LOGGER.info("Farm initialized successfully: {}", farm);
@@ -96,34 +110,44 @@ public class FarmService {
 
         farm.setLength(null);
         farm.setWidth(null);
-        farm.setSensors(new ArrayList<>());
+
+        //We have to unlink sensors to sectors
+        List<Sensor> sectorSensors = farm.getSectors().stream()
+            .flatMap(sector -> sector.getSensors().stream())
+            .collect(Collectors.toList());
+
+        farm.getSensors().addAll(sectorSensors);
+
+        //Delete sectors
         farm.setSectors(new ArrayList<>());
+
+        //Delete all events associate with this farm
+        eventDAO.deleteAllByFarmId(id);
         farm.setEvents(new ArrayList<>());
+
+        //Clean latitude, longitude y location key
         farm.setLatitude(null);
         farm.setLongitude(null);
         farm.setLocationKey(null);
 
+        //update farm
         update(farm);
     }
 
     public WeatherResponseDTO getWeather(String id) {
         Farm farm = getFarmById(id);
-
         WeatherData weatherData = weatherClient.getCurrentWeatherConditions(farm.getLocationKey());
+        return new WeatherResponseDTO(weatherData);
+    }
 
-        String temperature = farm.getSensors().stream()
-            .filter(it -> it.getSensorTypeId().equals(SensorType.SensorTypeId.AT))
-            .findFirst()
-            .map(it -> it.getLastMeasure().getValue() + "°C")
-            .orElse(null);
-
-        String humidity = farm.getSensors().stream()
-            .filter(it -> it.getSensorTypeId().equals(SensorType.SensorTypeId.AH))
-            .findFirst()
-            .map(it -> it.getLastMeasure().getValue() + "%")
-            .orElse(null);
-
-        return new WeatherResponseDTO(weatherData, temperature, humidity);
+    private void setLocation(Farm farm, Double latitude, Double longitude) {
+        if (latitude != null && longitude != null) {
+            farm.setLatitude(latitude);
+            farm.setLongitude(longitude);
+            //Get location position from weatherClient
+            LocationData locationData = weatherClient.geoPositionLocation(latitude, longitude);
+            farm.setLocationKey(locationData.getKey());
+        }
     }
 
 }

@@ -15,15 +15,17 @@ public class WeatherResponseDTO {
     private String temperature;
     private String humidity;
     private String weatherStatus;
+    private int weatherIcon;
     private String windSpeed;
     private int uvIndex;
     private String precipitation;
 
-    public WeatherResponseDTO(WeatherData weatherData, String temperature, String humidity) {
+    public WeatherResponseDTO(WeatherData weatherData) {
         this.dateTime = new Date();
-        this.temperature = temperature;
-        this.humidity = humidity;
+        this.temperature = weatherData.getTemperature().getMetric().getValue() + "°" + weatherData.getTemperature().getMetric().getUnit();
+        this.humidity = weatherData.getRelativeHumidity() + "%";
         this.weatherStatus = weatherData.getWeatherText();
+        this.weatherIcon = weatherData.getWeatherIcon();
         this.windSpeed = weatherData.getWind().getSpeed().getMetric().getCompleteValue();
         this.uvIndex = weatherData.getUvIndex();
         this.precipitation = weatherData.getPrecipitation().getMetric().getCompleteValue();

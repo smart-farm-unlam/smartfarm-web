@@ -23,6 +23,8 @@ public class FarmResponseDTO {
     private Double width;
     private List<Sensor> sensors;
     private List<Sector> sectors;
+    private Double latitude;
+    private Double longitude;
 
     public FarmResponseDTO(Farm farm) {
         this.id = farm.getId();
@@ -32,5 +34,7 @@ public class FarmResponseDTO {
         this.width = farm.getWidth();
         this.sensors = farm.getSensors();
         this.sectors = farm.getSectors();
+        this.latitude = farm.getLatitude();
+        this.longitude = farm.getLongitude();
     }
 }

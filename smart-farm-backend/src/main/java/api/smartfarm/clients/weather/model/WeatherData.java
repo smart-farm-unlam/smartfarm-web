@@ -12,6 +12,15 @@ public class WeatherData {
     @JsonProperty("WeatherText")
     private String weatherText;
 
+    @JsonProperty("WeatherIcon")
+    private int weatherIcon;
+
+    @JsonProperty("Temperature")
+    private Temperature temperature;
+
+    @JsonProperty("RelativeHumidity")
+    private int relativeHumidity;
+
     @JsonProperty("Wind")
     private Wind wind;
 

@@ -24,4 +24,6 @@ public interface EventDAO extends MongoRepository<Event, String> {
 
     @Query("{ 'farmId': ?0, 'sectorId': ?1 }")
     List<Event> findByFarmIdAndSectorId(String farmId, String sectorId);
+
+    void deleteAllByFarmId(String farmId);
 }

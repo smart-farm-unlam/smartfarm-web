@@ -4,6 +4,7 @@ import api.smartfarm.models.dtos.WeatherResponseDTO;
 import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
+import api.smartfarm.models.dtos.farms.UpdateFarmRequestDTO;
 import api.smartfarm.services.FarmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,14 @@ public class FarmController {
     @GetMapping("/{id}")
     public FarmResponseDTO getById(@PathVariable String id) {
         return farmService.getById(id);
+    }
+
+    @PutMapping("/{id}")
+    public FarmResponseDTO update(
+        @PathVariable String id,
+        @RequestBody UpdateFarmRequestDTO updateRequest
+    ) {
+        return farmService.update(id, updateRequest);
     }
 
     @PutMapping("/{id}/init")

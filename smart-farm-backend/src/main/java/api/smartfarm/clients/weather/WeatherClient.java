@@ -35,10 +35,10 @@ public class WeatherClient {
     }
 
     private static final String GEO_POSITION_URL = "%s/locations/v1/cities/geoposition/search?" +
-        "apikey=%s&q=%s,%s&language=es-ar&details=false&toplevel=true";
+        "apikey=%s&q=%s,%s&language=en-us&details=false&toplevel=true";
 
     private static final String CURRENT_WEATHER_URL = "%s/currentconditions/v1/%s?" +
-        "apikey=%s&language=es-ar&details=true";
+        "apikey=%s&language=en-us&details=true";
 
     private static final String ERROR_WEATHER_MESSAGE = "Failed to obtain current weather from Weather Client";
 

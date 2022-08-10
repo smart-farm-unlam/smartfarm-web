@@ -8,7 +8,6 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.lang.NonNullApi;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +36,7 @@ public class WeatherCacheInterceptor implements ClientHttpRequestInterceptor {
         byte[] body,
         ClientHttpRequestExecution execution
     ) throws IOException {
-        String key = request.getURI().getPath();
+        String key = request.getURI().getPath() + "?" + request.getURI().getQuery();
         ClientHttpResponse response = cache.getIfPresent(key);
         if (response != null) {
             LOGGER.info("Cache hit for key {}", key);
