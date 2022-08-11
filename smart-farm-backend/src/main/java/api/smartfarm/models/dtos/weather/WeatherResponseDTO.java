@@ -1,4 +1,4 @@
-package api.smartfarm.models.dtos;
+package api.smartfarm.models.dtos.weather;
 
 import api.smartfarm.clients.weather.model.WeatherData;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class WeatherResponseDTO {
 
     public WeatherResponseDTO(WeatherData weatherData) {
         this.dateTime = new Date();
-        this.temperature = weatherData.getTemperature().getMetric().getValue() + "°" + weatherData.getTemperature().getMetric().getUnit();
+        this.temperature = weatherData.getTemperature().getMetric().getCelsiusValue();
         this.humidity = weatherData.getRelativeHumidity() + "%";
         this.weatherStatus = weatherData.getWeatherText();
         this.weatherIcon = weatherData.getWeatherIcon();

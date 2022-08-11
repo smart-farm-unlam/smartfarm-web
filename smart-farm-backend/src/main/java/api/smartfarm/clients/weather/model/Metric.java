@@ -20,4 +20,8 @@ public class Metric {
     public String getCompleteValue() {
         return value + " " + unit;
     }
+
+    public String getCelsiusValue() {
+        return value + "°" + unit;
+    }
 }

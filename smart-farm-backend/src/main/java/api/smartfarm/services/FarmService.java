@@ -1,11 +1,13 @@
 package api.smartfarm.services;
 
 import api.smartfarm.clients.weather.WeatherClient;
+import api.smartfarm.clients.weather.model.FutureForecastData;
 import api.smartfarm.clients.weather.model.LocationData;
 import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
-import api.smartfarm.models.dtos.WeatherResponseDTO;
+import api.smartfarm.models.dtos.weather.ForecastResponseDTO;
+import api.smartfarm.models.dtos.weather.WeatherResponseDTO;
 import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
@@ -138,6 +140,15 @@ public class FarmService {
         Farm farm = getFarmById(id);
         WeatherData weatherData = weatherClient.getCurrentWeatherConditions(farm.getLocationKey());
         return new WeatherResponseDTO(weatherData);
+    }
+
+    public List<ForecastResponseDTO> futureWeather(String id) {
+        Farm farm = getFarmById(id);
+        FutureForecastData forecastData = weatherClient.getFutureForecast(farm.getLocationKey());
+
+        return forecastData.getDailyForecasts().stream()
+            .map(ForecastResponseDTO::new)
+            .collect(Collectors.toList());
     }
 
     private void setLocation(Farm farm, Double latitude, Double longitude) {

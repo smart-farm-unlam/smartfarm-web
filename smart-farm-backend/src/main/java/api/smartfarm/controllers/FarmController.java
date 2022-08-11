@@ -1,16 +1,18 @@
 package api.smartfarm.controllers;
 
-import api.smartfarm.models.dtos.WeatherResponseDTO;
 import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.UpdateFarmRequestDTO;
+import api.smartfarm.models.dtos.weather.ForecastResponseDTO;
+import api.smartfarm.models.dtos.weather.WeatherResponseDTO;
 import api.smartfarm.services.FarmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/farms")
@@ -55,6 +57,11 @@ public class FarmController {
     @GetMapping("/{id}/weather")
     public WeatherResponseDTO weather(@PathVariable String id) {
         return farmService.getWeather(id);
+    }
+
+    @GetMapping("/{id}/future-weather")
+    public List<ForecastResponseDTO> futureWeather(@PathVariable String id) {
+        return farmService.futureWeather(id);
     }
 
 }

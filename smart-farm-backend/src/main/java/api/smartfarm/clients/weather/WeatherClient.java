@@ -1,5 +1,6 @@
 package api.smartfarm.clients.weather;
 
+import api.smartfarm.clients.weather.model.FutureForecastData;
 import api.smartfarm.clients.weather.model.LocationData;
 import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.exceptions.FailedDependencyException;
@@ -39,6 +40,9 @@ public class WeatherClient {
 
     private static final String CURRENT_WEATHER_URL = "%s/currentconditions/v1/%s?" +
         "apikey=%s&language=en-us&details=true";
+
+    private static final String FUTURE_FORECAST_URL = "%s/forecasts/v1/daily/5day/%s?" +
+        "apikey=%s&language=en-us&details=true&metric=true";
 
     private static final String ERROR_WEATHER_MESSAGE = "Failed to obtain current weather from Weather Client";
 
@@ -125,6 +129,35 @@ public class WeatherClient {
             throw new LimitReachException(e.getMessage());
         } catch (Exception e) {
             throw new FailedDependencyException(ERROR_WEATHER_MESSAGE);
+        }
+    }
+
+    public FutureForecastData getFutureForecast(@NonNull String locationKey) {
+        FutureForecastData futureForecast;
+        try {
+            futureForecast = getFutureForecast(locationKey, apiKey);
+        } catch (LimitReachException e) {
+            LOGGER.warn(e.getMessage());
+            LOGGER.info("Trying to get future forecast with another apiKey");
+            futureForecast = getFutureForecast(locationKey, apiKey2);
+        }
+        return futureForecast;
+    }
+
+    private FutureForecastData getFutureForecast(String locationKey, String apiKey) {
+        String futureForecastUrl = String.format(
+            FUTURE_FORECAST_URL,
+            host,
+            locationKey,
+            apiKey
+        );
+
+        try {
+            return restTemplate.getForObject(futureForecastUrl, FutureForecastData.class);
+        } catch (HttpServerErrorException.ServiceUnavailable e) {
+            throw new LimitReachException(e.getMessage());
+        } catch (Exception e) {
+            throw new FailedDependencyException("Failed to obtain future forecast from Weather Client");
         }
     }
 
