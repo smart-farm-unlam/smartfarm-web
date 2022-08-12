@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Getter
 @Setter
@@ -24,6 +25,7 @@ public class Diagnostic {
     private Date dateTime;
 
     private String imgUrl;
-    
-    private DiagnosticType diagnosticTypeId; //Ver como persiste esto
+
+    @DocumentReference
+    private DiagnosticType diagnosticType;
 }
