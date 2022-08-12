@@ -6,12 +6,12 @@ import api.smartfarm.clients.weather.model.LocationData;
 import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
-import api.smartfarm.models.dtos.weather.ForecastResponseDTO;
-import api.smartfarm.models.dtos.weather.WeatherResponseDTO;
 import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.UpdateFarmRequestDTO;
+import api.smartfarm.models.dtos.weather.ForecastResponseDTO;
+import api.smartfarm.models.dtos.weather.WeatherResponseDTO;
 import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.exceptions.NotFoundException;
 import api.smartfarm.repositories.EventDAO;
@@ -157,7 +157,9 @@ public class FarmService {
             farm.setLongitude(longitude);
             //Get location position from weatherClient
             LocationData locationData = weatherClient.geoPositionLocation(latitude, longitude);
-            farm.setLocationKey(locationData.getKey());
+            if (locationData != null) {
+                farm.setLocationKey(locationData.getKey());
+            }
         }
     }
 
