@@ -1,5 +1,6 @@
 package api.smartfarm.controllers;
 
+import api.smartfarm.models.documents.Diagnostic;
 import api.smartfarm.services.DiagnosticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,11 @@ public class DiagnosticController {
 
     @PostMapping("/analyze")
     @ResponseStatus(HttpStatus.OK)
-    public void analyzePhoto(
+    public Diagnostic analyzePhoto(
         @RequestParam("farmId") String farmId,
         @RequestParam("plantId") String plantId,
         @RequestParam("file") MultipartFile imageFile
     ) {
-        diagnosticService.saveDiagnosticFile(farmId, plantId, imageFile);
+        return diagnosticService.runDiagnosticFromFile(farmId, plantId, imageFile);
     }
 }

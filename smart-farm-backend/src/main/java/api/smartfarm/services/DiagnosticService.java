@@ -1,12 +1,14 @@
 package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Diagnostic;
+import api.smartfarm.models.documents.DiagnosticType;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.exceptions.FailedStorageException;
 import api.smartfarm.models.exceptions.InvalidFileException;
 import api.smartfarm.models.exceptions.NotFoundException;
 import api.smartfarm.repositories.DiagnosticDAO;
+import api.smartfarm.repositories.DiagnosticTypeDAO;
 import api.smartfarm.repositories.FarmDAO;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.specialized.BlockBlobClient;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedInputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 @Service
 public class DiagnosticService {
@@ -35,17 +38,20 @@ public class DiagnosticService {
 
     private final FarmDAO farmDAO;
     private final DiagnosticDAO diagnosticDao;
+    private final DiagnosticTypeDAO diagnosticTypeDao;
     private final BlobServiceClient blobServiceClient;
 
     @Autowired
     public DiagnosticService(
         FarmDAO farmDAO,
         DiagnosticDAO diagnosticDao,
+        DiagnosticTypeDAO diagnosticTypeDao,
         BlobServiceClient blobServiceClient
     ) {
         this.farmDAO = farmDAO;
         this.diagnosticDao = diagnosticDao;
         this.blobServiceClient = blobServiceClient;
+        this.diagnosticTypeDao = diagnosticTypeDao;
     }
 
     private boolean validateDiagnosticFile(MultipartFile file) {
@@ -53,7 +59,7 @@ public class DiagnosticService {
         return file.getSize() <= maxDataSize;
     }
 
-    public void saveDiagnosticFile(String farmId, String plantId, MultipartFile file) {
+    public Diagnostic runDiagnosticFromFile(String farmId, String plantId, MultipartFile file) {
         if (!validateDiagnosticFile(file)) {
             throw new InvalidFileException("Uploaded file not valid.");
         }
@@ -61,10 +67,7 @@ public class DiagnosticService {
         Plant plant = plantFarm.getPlantById(plantId);
 
         String url = saveFileOnStorage(file);
-        Diagnostic diagnostic = new Diagnostic();
-        diagnostic.setImgUrl(url);
-        diagnostic.setDateTime(new Date());
-        diagnostic.setPlantId(plant.getId());
+        Diagnostic diagnostic = getDiagnostic(url,plant.getId());
         diagnostic = diagnosticDao.save(diagnostic);
         if (plant.getDiagnostics() == null) {
             plant.setDiagnostics(new ArrayList<>());
@@ -72,6 +75,27 @@ public class DiagnosticService {
         plant.getDiagnostics().add(diagnostic.getId());
         farmDAO.save(plantFarm);
         LOGGER.info("File uploaded successfully.");
+        return diagnostic;
+    }
+
+    private Diagnostic getDiagnostic(String url, String plantId) {
+        Diagnostic diagnostic = new Diagnostic();
+        diagnostic.setImgUrl(url);
+        diagnostic.setDateTime(new Date());
+        diagnostic.setPlantId(plantId);
+        DiagnosticType diagnosticType = getDiagnosticType(url);
+        diagnostic.setDiagnosticType(diagnosticType);
+        return diagnostic;
+    }
+
+    private DiagnosticType getDiagnosticType(String url) {
+        //TODO call AI implementation to get DiagnosticType
+        String[] diagnosticTypes = {"DM","PM","HT","BT","SB","SLS","WR"};
+        String diagnosticTypeRes = diagnosticTypes[new Random().nextInt(diagnosticTypes.length)];
+        return diagnosticTypeDao.findById(diagnosticTypeRes).orElseThrow(() -> {
+            String errorMsg = "No diagnostic type " + diagnosticTypeRes + " was found on database";
+            return new NotFoundException(errorMsg);
+        });
     }
 
     private Farm getPlantFarm(String farmId, String plantId) {
