@@ -30,10 +30,15 @@ public class SectorController {
         return sectorService.getSectors(farmId);
     }
 
-    //This integration could be temporal, is for microcontroller irrigation system
     @GetMapping("/{farmId}/crop-types")
     public List<SectorCropTypesDTO> getSectorCropTypes(@PathVariable String farmId) {
-        return sectorService.getSectorsCropTypes(farmId);
+        return sectorService.getSectorsCropTypes(farmId, null);
+    }
+
+    //This integration could be temporal, is for microcontroller irrigation system
+    @GetMapping("/{farmId}/crop-types/micro")
+    public List<SectorCropTypesDTO> getSectorCropTypesMicro(@PathVariable String farmId) {
+        return sectorService.getSectorsCropTypes(farmId, "microcontroller");
     }
 
     @PostMapping("/{farmId}")

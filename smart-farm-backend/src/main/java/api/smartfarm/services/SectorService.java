@@ -43,7 +43,10 @@ public class SectorService {
         return farm.getSectors().stream().map(SectorResponseDTO::new).collect(Collectors.toList());
     }
 
-    public List<SectorCropTypesDTO> getSectorsCropTypes(String farmId) {
+    public List<SectorCropTypesDTO> getSectorsCropTypes(
+        String farmId,
+        String source
+    ) {
         Farm farm = farmService.getFarmById(farmId);
         LOGGER.info("Getting sectors + cropType from farmId: {}", farmId);
         return farm.getSectors().stream().map(sector -> {
@@ -52,6 +55,13 @@ public class SectorService {
                 String errorMsg = "CropType with id " + id + " not exists on database";
                 return new NotFoundException(errorMsg);
             });
+            if ("microcontroller".equals(source)){
+                cropType.setOptimalEnvironment(null);
+                cropType.setPlantation(null);
+                cropType.setProperties(null);
+                cropType.setHarvest(null);
+                cropType.setFaq(null);
+            }
             return new SectorCropTypesDTO(sector, cropType);
         }).collect(Collectors.toList());
     }
@@ -116,7 +126,7 @@ public class SectorService {
             .findFirst()
             .orElse(null);
 
-        if(sensor != null) {
+        if (sensor != null) {
             sensors.add(sensor);
             farm.getSensors().remove(sensor);
         } else {
