@@ -1,18 +1,15 @@
-package api.smartfarm.models.dtos;
+package api.smartfarm.models.dtos.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Null;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserDTO {
-    @Null
-    private String id;
+public class CreateUserRequestDTO {
     @NotEmpty
     private String firstName;
     @NotEmpty

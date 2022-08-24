@@ -50,14 +50,14 @@ public class FarmService {
         this.eventDAO = eventDAO;
     }
 
-    public FarmResponseDTO create(CreateFarmRequestDTO createFarmRequestDTO) {
-        Optional<User> user = userDAO.findById(createFarmRequestDTO.getUserId());
+    public FarmResponseDTO create(CreateFarmRequestDTO createFarmRequest) {
+        Optional<User> user = userDAO.findById(createFarmRequest.getUserId());
         if (!user.isPresent()) {
-            String errorMsg = "User with id " + createFarmRequestDTO.getUserId() + "not exists on database";
+            String errorMsg = "User with id " + createFarmRequest.getUserId() + "not exists on database";
             throw new NotFoundException(errorMsg);
         }
 
-        Farm farm = new Farm(createFarmRequestDTO);
+        Farm farm = new Farm(createFarmRequest);
         farmDAO.save(farm);
         LOGGER.info("Farm created with id {}", farm.getId());
 
@@ -71,9 +71,9 @@ public class FarmService {
         return new FarmResponseDTO(farm);
     }
 
-    public FarmResponseDTO update(String id, UpdateFarmRequestDTO updateRequest) {
+    public FarmResponseDTO update(String id, UpdateFarmRequestDTO updateFarmRequest) {
         Farm farm = getFarmById(id);
-        setLocation(farm, updateRequest.getLatitude(), updateRequest.getLongitude());
+        setLocation(farm, updateFarmRequest.getLatitude(), updateFarmRequest.getLongitude());
 
         //Update farm
         update(farm);
@@ -94,14 +94,14 @@ public class FarmService {
         LOGGER.info("Farm {} updated successfully", farm.getId());
     }
 
-    public void initFarm(String id, InitFarmRequestDTO initRequest) {
+    public void initFarm(String id, InitFarmRequestDTO initFarmRequest) {
         resetFarm(id);
 
         Farm farm = getFarmById(id);
-        farm.setLength(initRequest.getLength());
-        farm.setWidth(initRequest.getWidth());
+        farm.setLength(initFarmRequest.getLength());
+        farm.setWidth(initFarmRequest.getWidth());
 
-        setLocation(farm, initRequest.getLatitude(), initRequest.getLongitude());
+        setLocation(farm, initFarmRequest.getLatitude(), initFarmRequest.getLongitude());
 
         update(farm);
         LOGGER.info("Farm initialized successfully: {}", farm);

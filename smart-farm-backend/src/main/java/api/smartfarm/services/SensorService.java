@@ -4,6 +4,7 @@ import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.models.entities.Measure;
 import api.smartfarm.models.entities.Sensor;
+import api.smartfarm.models.entities.SensorStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,17 @@ import java.util.stream.Collectors;
 public class SensorService {
 
     private final FarmService farmService;
+    private final NotificationService notificationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorService.class);
 
     @Autowired
-    public SensorService(FarmService farmService) {
+    public SensorService(
+        FarmService farmService,
+        NotificationService notificationService
+    ) {
         this.farmService = farmService;
+        this.notificationService = notificationService;
     }
 
     public void handleMeasures(String farmId, List<SensorRequestDTO> sensorData) {
@@ -55,8 +61,13 @@ public class SensorService {
                     sensor.setLastMeasure(lastMeasure);
                     sensor.setStatus(sensor.resolveSensorStatus());
                 } else {
-                    sensors.add(new Sensor(sd));
+                    sensor = new Sensor(sd);
+                    sensors.add(sensor);
                 }
+            }
+
+            if (SensorStatus.FAIL == sensor.getStatus()) {
+                notificationService.sendSensorFailNotification(sensor.getCode(), farm);
             }
         }
 
