@@ -42,6 +42,8 @@ public class NotificationService {
     ) {
         User user = userService.getUserById(farm.getUserId());
 
+        //TODO SEND DATA sectorCode y sensorCode
+
         Notification notification = Notification.builder()
             .setTitle("Sensor " + sensorCode + " fallando.")
             .setBody("El sensor " + sensorCode + " esta fallando, favor de revisar la conexión.")
