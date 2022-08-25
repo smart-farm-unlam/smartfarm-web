@@ -11,7 +11,7 @@
 
     <groupId>api.smartfarm</groupId>
     <artifactId>smart-farm-backend</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
     <name>smart-farm-backend</name>
     <description>smart-farm-backend</description>
 
@@ -61,6 +61,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>31.1-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.0.0</version>
         </dependency>
     </dependencies>
 
