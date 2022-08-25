@@ -25,7 +25,8 @@ public class SensorType {
         AH("Ambient Humidity"),
         SH("Soil Humidity"),
         ST("Soil Temperature"),
-        LL("Light Level");
+        LL("Light Level"),
+        BS("Brightness Level");
 
         private final String description;
 
