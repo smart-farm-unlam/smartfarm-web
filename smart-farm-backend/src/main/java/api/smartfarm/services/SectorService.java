@@ -55,7 +55,7 @@ public class SectorService {
                 String errorMsg = "CropType with id " + id + " not exists on database";
                 return new NotFoundException(errorMsg);
             });
-            if ("microcontroller".equals(source)){
+            if ("microcontroller".equals(source)) {
                 cropType.setOptimalEnvironment(null);
                 cropType.setPlantation(null);
                 cropType.setProperties(null);
@@ -130,7 +130,7 @@ public class SectorService {
             sensors.add(sensor);
             farm.getSensors().remove(sensor);
         } else {
-            sensors.add(new Sensor(sensorRequestDTO));
+            sensors.add(new Sensor(sensorRequestDTO, null));
         }
         farmService.update(farm);
     }

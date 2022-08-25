@@ -1,9 +1,9 @@
 package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Farm;
+import api.smartfarm.models.documents.Measure;
 import api.smartfarm.models.dtos.AverageMeasureHistoricDTO;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
-import api.smartfarm.models.entities.Measure;
 import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.entities.SensorDateFilter;
 import api.smartfarm.models.entities.SensorStatus;
@@ -42,7 +42,7 @@ public class SensorService {
 
         for (SensorRequestDTO sd : sensorData) {
             String code = sd.getCode();
-            Measure lastMeasure = new Measure(sd.getMeasure());
+            Measure lastMeasure = new Measure(farmId, code, sd.getMeasure());
 
             Sensor sensor = sensors.stream()
                 .filter(s -> s.getCode().equals(code))
@@ -62,10 +62,12 @@ public class SensorService {
                     sensor.setLastMeasure(lastMeasure);
                     sensor.setStatus(sensor.resolveSensorStatus());
                 } else {
-                    sensor = new Sensor(sd);
+                    sensor = new Sensor(sd, lastMeasure);
                     sensors.add(sensor);
                 }
             }
+
+            measureService.saveMeasure(lastMeasure);
 
             if (SensorStatus.FAIL == sensor.getStatus()) {
                 notificationService.sendSensorFailNotification(sensor.getCode(), farm);

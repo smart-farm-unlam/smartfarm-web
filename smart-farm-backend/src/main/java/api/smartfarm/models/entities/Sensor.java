@@ -1,11 +1,14 @@
 package api.smartfarm.models.entities;
 
+import api.smartfarm.models.documents.Measure;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 
@@ -18,16 +21,18 @@ public class Sensor {
     private String code;
     private SensorTypeId sensorTypeId;
     private SensorStatus status;
+
+    @JsonProperty("lastMeasure")
+    @DocumentReference
     private Measure lastMeasure;
 
     @Transient
     private static final Double ERROR_VALUE = -99.0;
 
-    public Sensor(SensorRequestDTO sensorRequestDTO) {
+    public Sensor(SensorRequestDTO sensorRequestDTO, Measure lastMeasure) {
         this.code = sensorRequestDTO.getCode();
         this.sensorTypeId = resolveSensorTypeId();
-        this.lastMeasure = (sensorRequestDTO.getMeasure() != null) ?
-            new Measure(sensorRequestDTO.getMeasure()) : null;
+        this.lastMeasure = lastMeasure;
         this.status = resolveSensorStatus();
     }
 
