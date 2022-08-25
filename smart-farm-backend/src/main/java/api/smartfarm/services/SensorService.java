@@ -1,9 +1,11 @@
 package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Farm;
+import api.smartfarm.models.dtos.AverageMeasureHistoricDTO;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.models.entities.Measure;
 import api.smartfarm.models.entities.Sensor;
+import api.smartfarm.models.entities.SensorDateFilter;
 import api.smartfarm.models.entities.SensorStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +19,15 @@ import java.util.stream.Collectors;
 public class SensorService {
 
     private final FarmService farmService;
+    private final MeasureService measureService;
     private final NotificationService notificationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorService.class);
 
     @Autowired
-    public SensorService(
-        FarmService farmService,
-        NotificationService notificationService
-    ) {
+    public SensorService(FarmService farmService, MeasureService measureService1, NotificationService notificationService) {
         this.farmService = farmService;
+        this.measureService = measureService1;
         this.notificationService = notificationService;
     }
 
@@ -75,5 +76,7 @@ public class SensorService {
         LOGGER.info("Update farm with id {} successfully", farm.getId());
     }
 
-
+    public List<AverageMeasureHistoricDTO> getAverageHistoric(String farmId, String sensorCode, SensorDateFilter sensorDateFilter) {
+        return measureService.getAverageMeasureBySensorCode(farmId, sensorCode, sensorDateFilter);
+    }
 }
