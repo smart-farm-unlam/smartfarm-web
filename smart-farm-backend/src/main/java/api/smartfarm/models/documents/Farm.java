@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -50,5 +51,18 @@ public class Farm {
             }
         }
         return null;
+    }
+
+    public Optional<Sector> getSectorBySensorCode(String sensorCode) {
+        for (Sector sector : getSectors()) {
+            Optional<Sensor> sensor = sector.getSensors().stream()
+                .filter(ss -> sensorCode.equals(ss.getCode()))
+                .findFirst();
+
+            if (sensor.isPresent()) {
+                return Optional.of(sector);
+            }
+        }
+        return Optional.empty();
     }
 }

@@ -3,10 +3,7 @@ package api.smartfarm.models.entities;
 import api.smartfarm.models.documents.Measure;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -16,6 +13,7 @@ import static api.smartfarm.models.documents.SensorType.SensorTypeId;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Sensor {
 
     private String code;

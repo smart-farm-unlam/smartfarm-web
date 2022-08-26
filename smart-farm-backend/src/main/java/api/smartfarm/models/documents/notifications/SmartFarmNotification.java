@@ -35,4 +35,8 @@ public abstract class SmartFarmNotification {
         this.devices = devices;
         this.messageIds = new ArrayList<>();
     }
+
+    public void addMessageId(String messageId) {
+        messageIds.add(messageId);
+    }
 }
