@@ -7,6 +7,7 @@ import api.smartfarm.models.documents.notifications.SensorFailNotification;
 import api.smartfarm.models.documents.notifications.SmartFarmNotification;
 import api.smartfarm.models.dtos.notifications.NotificationDTO;
 import api.smartfarm.models.dtos.notifications.SensorFailNotificationDTO;
+import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.exceptions.InvalidNotificationException;
 import api.smartfarm.repositories.NotificationDAO;
 import com.google.firebase.messaging.*;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +44,11 @@ public class NotificationService {
     ) {
         User user = userService.getUserById(farm.getUserId());
 
-        //TODO SEND DATA sectorCode y sensorCode
+        String sectorCode = "";
+        Optional<Sector> sectorRetrieve = farm.getSectorBySensorCode(sensorCode);
+        if (sectorRetrieve.isPresent()) {
+            sectorCode = sectorRetrieve.get().getCode();
+        }
 
         Notification notification = Notification.builder()
             .setTitle("Sensor " + sensorCode + " fallando.")
@@ -51,6 +57,8 @@ public class NotificationService {
 
         MulticastMessage message = MulticastMessage.builder()
             .setNotification(notification)
+            .putData("sectorCode", sectorCode)
+            .putData("sensorCode", sensorCode)
             .addAllTokens(user.getDeviceIds())
             .build();
 
@@ -69,7 +77,7 @@ public class NotificationService {
             for (SendResponse sr : response.getResponses()) {
                 if (sr.isSuccessful()) {
                     sendSuccessfully = true;
-                    sfNotification.getMessageIds().add(sr.getMessageId());
+                    sfNotification.addMessageId(sr.getMessageId());
                 } else {
                     LOGGER.error("Failed to send push notification to userId {}, error: {}", user.getId(), sr.getException().getMessage());
                 }
