@@ -1,5 +1,7 @@
 package api.smartfarm.services;
 
+import api.smartfarm.clients.diagnostic.DiagnosticClient;
+import api.smartfarm.clients.diagnostic.model.DiagnosticResponse;
 import api.smartfarm.models.documents.Diagnostic;
 import api.smartfarm.models.documents.DiagnosticType;
 import api.smartfarm.models.documents.Farm;
@@ -38,8 +40,6 @@ public class DiagnosticService {
     @Value("${spring.cloud.azure.storage.blob.container-name}")
     private String azureBlobContName;
 
-    @Value("#{systemProperties['java.class.path']}")
-    private String classPath;
     @Value("${plant-health.python-script}")
     private String pythonScript;
     @Value("${plant-health.ai.model}")
@@ -48,18 +48,20 @@ public class DiagnosticService {
     private final DiagnosticDAO diagnosticDao;
     private final DiagnosticTypeDAO diagnosticTypeDao;
     private final BlobServiceClient blobServiceClient;
+    private final DiagnosticClient diagnosticClient;
 
     @Autowired
     public DiagnosticService(
             FarmDAO farmDAO,
             DiagnosticDAO diagnosticDao,
             DiagnosticTypeDAO diagnosticTypeDao,
-            BlobServiceClient blobServiceClient
-    ) {
+            BlobServiceClient blobServiceClient,
+            DiagnosticClient diagnosticClient) {
         this.farmDAO = farmDAO;
         this.diagnosticDao = diagnosticDao;
         this.blobServiceClient = blobServiceClient;
         this.diagnosticTypeDao = diagnosticTypeDao;
+        this.diagnosticClient = diagnosticClient;
     }
 
     private boolean validateDiagnosticFile(MultipartFile file) {
@@ -104,7 +106,7 @@ public class DiagnosticService {
     }
 
     private String getDiagnosticTypeId(String url) {
-        String result = callAI(url);
+        String result = callAIDiagnosticServer(url);
         if(result==null)
             return "INVALID";
         switch (result){
@@ -157,18 +159,25 @@ public class DiagnosticService {
         return fileUrl;
     }
 
+    private String callAIDiagnosticServer(String url) {
+        DiagnosticResponse response = diagnosticClient.diagnosticPlantHealth(url);
+        return response.getDiagnostic();
+    }
+
     private String callAI(String url) {
         try {
-            String path = classPath.split(";")[0];
+            //String path = classPath.split(";")[0];
+            String path = "";
 
             String[] cmd = {
-                    "python ",
-                    path.concat(pythonScript)+" ",
-                    path.concat(iaModel)+" ",
+                    "python3",
+                    path.concat(pythonScript),
+                    path.concat(iaModel),
                     url
             };
 
-            String finalCommand = String.format("%s%s%s%s", cmd[0], cmd[1], cmd[2], cmd[3]);
+            //String finalCommand = String.format("%s%s%s%s", cmd[0], cmd[1], cmd[2], cmd[3]);
+            String finalCommand = String.format("%s%s%s", cmd[0], cmd[1], cmd[2]);
             LOGGER.info("Command to execute: {}", finalCommand);
 
             ProcessBuilder processBuilder = new ProcessBuilder(cmd);
