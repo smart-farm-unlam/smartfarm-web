@@ -31,16 +31,16 @@ public class NotificationService {
 
     @Autowired
     public NotificationService(
-        NotificationDAO notificationDAO,
-        UserService userService
+            NotificationDAO notificationDAO,
+            UserService userService
     ) {
         this.notificationDAO = notificationDAO;
         this.userService = userService;
     }
 
     public void sendSensorFailNotification(
-        String sensorCode,
-        Farm farm
+            String sensorCode,
+            Farm farm
     ) {
         User user = userService.getUserById(farm.getUserId());
 
@@ -50,26 +50,59 @@ public class NotificationService {
             sectorCode = sectorRetrieve.get().getCode();
         }
 
-        Notification notification = Notification.builder()
-            .setTitle("Sensor " + sensorCode + " fallando.")
-            .setBody("El sensor " + sensorCode + " esta fallando, favor de revisar la conexión.")
-            .build();
+        Notification notification = buildNotification("Sensor ", sensorCode, " fallando.", " esta fallando, favor de revisar la conexión.");
+        MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
+        SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
 
-        MulticastMessage message = MulticastMessage.builder()
-            .setNotification(notification)
-            .putData("sectorCode", sectorCode)
-            .putData("sensorCode", sensorCode)
-            .addAllTokens(user.getDeviceIds())
-            .build();
+        sendToBatch(message, sfNotification, user);
+    }
 
-        SmartFarmNotification sfNotification = new SensorFailNotification(
-            new Date(),
-            farm.getId(),
-            user.getId(),
-            user.getDeviceIds(),
-            sensorCode
+    public void sendParameterOutOfRange(
+            String sensorCode,
+            Farm farm) {
+
+        User user = userService.getUserById(farm.getUserId());
+
+        String sectorCode = "";
+        Optional<Sector> sectorRetrieve = farm.getSectorBySensorCode(sensorCode);
+        if (sectorRetrieve.isPresent()) {
+            sectorCode = sectorRetrieve.get().getCode();
+        }
+
+        Notification notification = buildNotification("Parametros del sensor ", sensorCode, " no esperados.", " brinda parametros fuera de la media");
+        MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
+        SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
+
+        sendToBatch(message, sfNotification, user);
+    }
+
+    private SensorFailNotification buildSmartFarmNotification(Farm farm, User user, String sensorCode) {
+        return new SensorFailNotification(
+                new Date(),
+                farm.getId(),
+                user.getId(),
+                user.getDeviceIds(),
+                sensorCode
         );
+    }
 
+    private Notification buildNotification(String x, String sensorCode, String x1, String x2) {
+        return Notification.builder()
+                .setTitle(x + sensorCode + x1)
+                .setBody("El sensor " + sensorCode + x2)
+                .build();
+    }
+
+    private MulticastMessage buildMessage(Notification notification, String sectorCode, String sensorCode, User user) {
+        return MulticastMessage.builder()
+                .setNotification(notification)
+                .putData("sectorCode", sectorCode)
+                .putData("sensorCode", sensorCode)
+                .addAllTokens(user.getDeviceIds())
+                .build();
+    }
+
+    private void sendToBatch(MulticastMessage message, SmartFarmNotification sfNotification, User user) {
         boolean sendSuccessfully = false;
 
         try {

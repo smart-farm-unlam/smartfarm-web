@@ -71,6 +71,8 @@ public class SensorService {
 
             if (SensorStatus.FAIL == sensor.getStatus()) {
                 notificationService.sendSensorFailNotification(sensor.getCode(), farm);
+            } else if (SensorStatus.OUT_RAGE == sensor.getStatus()) {
+                notificationService.sendParameterOutOfRange(sensor.getCode(), farm);
             }
         }
 
