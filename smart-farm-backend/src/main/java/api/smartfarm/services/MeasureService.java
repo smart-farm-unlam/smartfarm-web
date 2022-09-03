@@ -55,7 +55,11 @@ public class MeasureService {
                 break;
         }
 
-        List<Measure> measures = measureDAO.findByFarmIdAndSensorCodeAndDateTimeGreaterThanEqual(farmId, sensorCode, dateFrom);
+        List<Measure> measures = measureDAO.findByFarmIdAndSensorCodeAndDateTimeGreaterThanEqualOrderByDateTime(
+            farmId,
+            sensorCode,
+            dateFrom
+        );
         if (sensorDateFilter == DAY) {
             return measures.stream()
                 .map(AverageMeasureHistoricDTO::new)
