@@ -15,10 +15,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static api.smartfarm.models.entities.SensorDateFilter.DAY;
@@ -68,13 +65,18 @@ public class MeasureService {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
 
         Map<Date, List<Measure>> measuresByDate = measures.stream()
-            .collect(Collectors.groupingBy(m -> {
-                try {
-                    return formatter.parse(formatter.format(m.getDateTime()));
-                } catch (ParseException e) {
-                    throw new DateParseException("Error parsing sensor date filter");
-                }
-            }));
+            .collect(
+                Collectors.groupingBy(m -> {
+                        try {
+                            return formatter.parse(formatter.format(m.getDateTime()));
+                        } catch (ParseException e) {
+                            throw new DateParseException("Error parsing sensor date filter");
+                        }
+                    },
+                    LinkedHashMap::new,
+                    Collectors.toList()
+                )
+            );
 
         List<AverageMeasureHistoricDTO> averageMeasureHistoricDTOs = new ArrayList<>();
         measuresByDate.forEach((date, value) -> {
