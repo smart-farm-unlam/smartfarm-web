@@ -50,7 +50,9 @@ public class NotificationService {
             sectorCode = sectorRetrieve.get().getCode();
         }
 
-        Notification notification = buildNotification("Sensor ", sensorCode, " fallando.", " esta fallando, favor de revisar la conexión.");
+        String title = String.format("Sensor %s fallando.", sectorCode);
+        String body = String.format("El sensor %s esta fallando, favor de revisar la conexión.", sectorCode);
+        Notification notification = buildNotification(title, body);
         MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
         SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
 
@@ -71,7 +73,9 @@ public class NotificationService {
             sectorCode = sectorRetrieve.get().getCode();
         }
 
-        Notification notification = buildNotification("Parametros del sensor ", sensorCode, " no esperados.", " brinda parametros fuera de la media");
+        String title = String.format("Parametros del sensor %s no esperados.", sectorCode);
+        String body = String.format("El sensor %s brinda parametros fuera de la media.", sectorCode);
+        Notification notification = buildNotification(title, body);
         MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
         SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
 
@@ -88,10 +92,10 @@ public class NotificationService {
         );
     }
 
-    private Notification buildNotification(String title, String sensorCode, String subtitle, String body) {
+    private Notification buildNotification(String title, String body) {
         return Notification.builder()
-                .setTitle(title + sensorCode + subtitle)
-                .setBody("El sensor " + sensorCode + body)
+                .setTitle(title)
+                .setBody(body)
                 .build();
     }
 
