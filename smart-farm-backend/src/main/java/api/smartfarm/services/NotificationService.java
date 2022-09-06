@@ -54,7 +54,9 @@ public class NotificationService {
         MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
         SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
 
-        sendToBatch(message, sfNotification, user);
+        sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
+        sfNotification = notificationDAO.save(sfNotification);
+        LOGGER.info("Notification created with id {}", sfNotification.getId());
     }
 
     public void sendParameterOutOfRange(
@@ -73,7 +75,7 @@ public class NotificationService {
         MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
         SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
 
-        sendToBatch(message, sfNotification, user);
+        sendPushNotification(message, sfNotification, user);
     }
 
     private SensorFailNotification buildSmartFarmNotification(Farm farm, User user, String sensorCode) {
@@ -86,10 +88,10 @@ public class NotificationService {
         );
     }
 
-    private Notification buildNotification(String x, String sensorCode, String x1, String x2) {
+    private Notification buildNotification(String title, String sensorCode, String subtitle, String body) {
         return Notification.builder()
-                .setTitle(x + sensorCode + x1)
-                .setBody("El sensor " + sensorCode + x2)
+                .setTitle(title + sensorCode + subtitle)
+                .setBody("El sensor " + sensorCode + body)
                 .build();
     }
 
@@ -102,7 +104,7 @@ public class NotificationService {
                 .build();
     }
 
-    private void sendToBatch(MulticastMessage message, SmartFarmNotification sfNotification, User user) {
+    private NotificationStatus sendPushNotification(MulticastMessage message, SmartFarmNotification sfNotification, User user) {
         boolean sendSuccessfully = false;
 
         try {
@@ -120,13 +122,10 @@ public class NotificationService {
         }
 
         if (sendSuccessfully) {
-            sfNotification.setStatus(NotificationStatus.SENT);
+            return NotificationStatus.SENT;
         } else {
-            sfNotification.setStatus(NotificationStatus.FAIL);
+            return NotificationStatus.FAIL;
         }
-
-        sfNotification = notificationDAO.save(sfNotification);
-        LOGGER.info("Notification created with id {}", sfNotification.getId());
     }
 
     public List<NotificationDTO> getNotifications(String farmId) {
