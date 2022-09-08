@@ -34,7 +34,7 @@ public class DiagnosticClient {
             LOGGER.info("DiagnosticResponse {}", response);
             return response;
         } catch (Exception e) {
-            throw new FailedDependencyException("Failed to obtain current weather from Diagnostic Client");
+            throw new FailedDependencyException("Failed to obtain diagnostic from Diagnostic Client");
         }
     }
 

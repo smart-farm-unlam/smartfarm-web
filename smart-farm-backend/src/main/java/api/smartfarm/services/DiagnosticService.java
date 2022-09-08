@@ -52,11 +52,12 @@ public class DiagnosticService {
 
     @Autowired
     public DiagnosticService(
-            FarmDAO farmDAO,
-            DiagnosticDAO diagnosticDao,
-            DiagnosticTypeDAO diagnosticTypeDao,
-            BlobServiceClient blobServiceClient,
-            DiagnosticClient diagnosticClient) {
+        FarmDAO farmDAO,
+        DiagnosticDAO diagnosticDao,
+        DiagnosticTypeDAO diagnosticTypeDao,
+        BlobServiceClient blobServiceClient,
+        DiagnosticClient diagnosticClient
+    ) {
         this.farmDAO = farmDAO;
         this.diagnosticDao = diagnosticDao;
         this.blobServiceClient = blobServiceClient;
@@ -75,7 +76,7 @@ public class DiagnosticService {
         }
         Farm plantFarm = getPlantFarm(farmId, plantId);
         Plant plant = plantFarm.getPlantById(plantId);
-        Diagnostic diagnostic = getDiagnostic(file,plant.getId());
+        Diagnostic diagnostic = getDiagnostic(file, plant.getId());
         diagnostic = diagnosticDao.save(diagnostic);
         if (plant.getDiagnostics() == null) {
             plant.setDiagnostics(new ArrayList<>());
@@ -107,9 +108,10 @@ public class DiagnosticService {
 
     private String getDiagnosticTypeId(String url) {
         String result = callAIDiagnosticServer(url);
-        if(result==null)
+        if (result == null)
             return "INVALID";
-        switch (result){
+        //TODO create enum for this
+        switch (result) {
             case "arugula_downy_mildew":
             case "basil_downy_mildew":
             case "lettuce_fungus_downy_mildew":
@@ -170,10 +172,10 @@ public class DiagnosticService {
             String path = "";
 
             String[] cmd = {
-                    "python3",
-                    path.concat(pythonScript),
-                    path.concat(iaModel),
-                    url
+                "python3",
+                path.concat(pythonScript),
+                path.concat(iaModel),
+                url
             };
 
             //String finalCommand = String.format("%s%s%s%s", cmd[0], cmd[1], cmd[2], cmd[3]);
@@ -186,13 +188,13 @@ public class DiagnosticService {
             BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String res = null;
             String resAux;
-            while((resAux=in.readLine())!=null){
-                res=resAux;
-                LOGGER.info("AI log: {}",res);
+            while ((resAux = in.readLine()) != null) {
+                res = resAux;
+                LOGGER.info("AI log: {}", res);
             }
-            LOGGER.info("Final value is: {}",res);
+            LOGGER.info("Final value is: {}", res);
             return res;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new FailedAICommandException("Failed to call AI for diagnosis.");
         }
