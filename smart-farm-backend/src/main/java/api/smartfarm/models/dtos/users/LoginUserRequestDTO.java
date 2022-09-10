@@ -9,11 +9,10 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CreateUserRequestDTO {
+public class LoginUserRequestDTO {
     @NotEmpty
-    private String firstName;
-    @NotEmpty
-    private String lastName;
+    private String username;
 
+    @NotEmpty
     private String email;
 }

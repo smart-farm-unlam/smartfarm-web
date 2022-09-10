@@ -13,14 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponseDTO {
-    private String firstName;
-    private String lastName;
+    private String id;
+    private String username;
     private String email;
     private List<String> deviceIds;
 
     public UserResponseDTO(User user) {
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
+        this.id = user.getId();
+        this.username = user.getUsername();
         this.email = user.getEmail();
         this.deviceIds = user.getDeviceIds();
     }

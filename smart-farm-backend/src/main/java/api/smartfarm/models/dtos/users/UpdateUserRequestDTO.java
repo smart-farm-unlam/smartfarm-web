@@ -8,8 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UpdateUserRequestDTO {
-    private String firstName;
-    private String lastName;
+    private String username;
     private String email;
     private String deviceId;
 }

@@ -1,6 +1,5 @@
 package api.smartfarm.models.documents;
 
-import api.smartfarm.models.dtos.users.CreateUserRequestDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,15 +16,13 @@ import java.util.List;
 @Document(collection = "users")
 public class User {
     private String id;
-    private String firstName;
-    private String lastName;
+    private String username;
     private String email;
     private List<String> deviceIds;
 
-    public User(CreateUserRequestDTO createUserRequest) {
-        this.firstName = createUserRequest.getFirstName();
-        this.lastName = createUserRequest.getLastName();
-        this.email = createUserRequest.getEmail();
+    public User(String username, String email) {
+        this.username = username;
+        this.email = email;
         this.deviceIds = new ArrayList<>();
     }
 
