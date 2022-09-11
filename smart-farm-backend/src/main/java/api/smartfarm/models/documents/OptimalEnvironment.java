@@ -8,9 +8,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class OptimalEnvironment {
-    public String germinationTemperature;
-    public String optimalTemperature;
-    public String irrigation;
-    public String humidity;
-    public String ph;
+    private String germinationTemperature;
+    private String optimalTemperature;
+    private String irrigation;
+    private String humidity;
+    private String ph;
 }

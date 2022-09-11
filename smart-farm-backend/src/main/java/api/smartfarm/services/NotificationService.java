@@ -3,6 +3,7 @@ package api.smartfarm.services;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
 import api.smartfarm.models.documents.notifications.NotificationStatus;
+import api.smartfarm.models.documents.notifications.ParameterOutOfRangeNotification;
 import api.smartfarm.models.documents.notifications.SensorFailNotification;
 import api.smartfarm.models.documents.notifications.SmartFarmNotification;
 import api.smartfarm.models.dtos.notifications.NotificationDTO;
@@ -54,7 +55,7 @@ public class NotificationService {
         String body = String.format("El sensor %s esta fallando, favor de revisar la conexión.", sectorCode);
         Notification notification = buildNotification(title, body);
         MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
-        SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
+        SmartFarmNotification sfNotification = buildSensorFailNotification(farm, user, sensorCode);
 
         sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
         sfNotification = notificationDAO.save(sfNotification);
@@ -62,33 +63,37 @@ public class NotificationService {
     }
 
     public void sendParameterOutOfRange(
-            String sensorCode,
+            String notificationBody,
             Farm farm) {
 
         User user = userService.getUserById(farm.getUserId());
 
-        String sectorCode = "";
-        Optional<Sector> sectorRetrieve = farm.getSectorBySensorCode(sensorCode);
-        if (sectorRetrieve.isPresent()) {
-            sectorCode = sectorRetrieve.get().getCode();
-        }
+        String title = "Hay parámetros fuera de lo normal en tu huerta!";
+        Notification notification = buildNotification(title, notificationBody);
+        MulticastMessage message = buildMessage(notification, user);
+        SmartFarmNotification sfNotification = buildParameterOutOfRangeNotification(farm, user);
 
-        String title = String.format("Parametros del sensor %s no esperados.", sectorCode);
-        String body = String.format("El sensor %s brinda parametros fuera de la media.", sectorCode);
-        Notification notification = buildNotification(title, body);
-        MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
-        SmartFarmNotification sfNotification = buildSmartFarmNotification(farm, user, sensorCode);
-
-        sendPushNotification(message, sfNotification, user);
+        sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
+        sfNotification = notificationDAO.save(sfNotification);
+        LOGGER.info("Notification created with id {}", sfNotification.getId());
     }
 
-    private SensorFailNotification buildSmartFarmNotification(Farm farm, User user, String sensorCode) {
+    private SensorFailNotification buildSensorFailNotification(Farm farm, User user, String sensorCode) {
         return new SensorFailNotification(
                 new Date(),
                 farm.getId(),
                 user.getId(),
                 user.getDeviceIds(),
                 sensorCode
+        );
+    }
+
+    private ParameterOutOfRangeNotification buildParameterOutOfRangeNotification(Farm farm, User user) {
+        return new ParameterOutOfRangeNotification(
+                new Date(),
+                farm.getId(),
+                user.getId(),
+                user.getDeviceIds()
         );
     }
 
@@ -104,6 +109,13 @@ public class NotificationService {
                 .setNotification(notification)
                 .putData("sectorCode", sectorCode)
                 .putData("sensorCode", sensorCode)
+                .addAllTokens(user.getDeviceIds())
+                .build();
+    }
+
+    private MulticastMessage buildMessage(Notification notification, User user) {
+        return MulticastMessage.builder()
+                .setNotification(notification)
                 .addAllTokens(user.getDeviceIds())
                 .build();
     }

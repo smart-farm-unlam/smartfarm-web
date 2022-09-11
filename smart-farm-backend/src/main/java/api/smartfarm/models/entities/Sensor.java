@@ -25,7 +25,7 @@ public class Sensor {
     private Measure lastMeasure;
 
     @Transient
-    private static final Double ERROR_VALUE = -99.0;
+    public static final Double ERROR_VALUE = -99.0;
 
     public Sensor(SensorRequestDTO sensorRequestDTO, Measure lastMeasure) {
         this.code = sensorRequestDTO.getCode();

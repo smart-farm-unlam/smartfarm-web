@@ -12,4 +12,5 @@ public class CropParameter {
     private Double min;
     private Double max;
     private String unit;
+    private String relatedSensor;
 }
