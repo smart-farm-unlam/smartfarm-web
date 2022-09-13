@@ -19,10 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class MeasuresControlSchedule {
@@ -58,45 +56,60 @@ public class MeasuresControlSchedule {
     }
 
     private void checkFarmMeasures(Farm farm) {
-        List<String> farmNotOkValues = getFarmNotOkValues(farm);
+        List<String> farmNotOkValues = getNotOkValues(farm);
 
         if (!farmNotOkValues.isEmpty() && !notificationSentRecently(farm.getId()))
-            notificationService.sendParameterOutOfRange(String.join("\n",farmNotOkValues),farm);
+            notificationService.sendParameterOutOfRange(String.join("\n", farmNotOkValues), farm);
     }
 
-    private List<String> getFarmNotOkValues(Farm farm) {
-        List<String> farmNotOkValues = new ArrayList<>();
-        List<AverageMeasure> averageMeasures = new ArrayList<>();
+    private List<String> getNotOkValues(Farm farm) {
+        List<String> notOkValues = new ArrayList<>();
         List<CropType> cropTypes = new ArrayList<>();
-
-        loadSensorsAverageMeasures(farm.getId(), farm.getSensors(), averageMeasures);
-
         List<Sector> farmSectors = farm.getSectors();
-        farmSectors.forEach(sector -> {
-            loadSensorsAverageMeasures(farm.getId(), sector.getSensors(), averageMeasures);
 
+        farmSectors.forEach(sector -> {
             CropType cropType = cropTypeDAO.findById(sector.getCrop().getType()).orElseThrow(() -> {
                 String errorMsg = "No crop type " + sector.getCrop().getType() + " was found on database";
                 return new NotFoundException(errorMsg);
             });
             cropTypes.add(cropType);
+            notOkValues.addAll(
+                    checkSectorSensorsValues(farm.getId(), sector, Collections.singletonList(cropType))
+            );
         });
 
+        notOkValues.addAll(checkFarmSensorsValues(farm.getId(), farm.getSensors(), cropTypes));
+        return notOkValues;
+    }
+
+    private Collection<String> checkFarmSensorsValues(String farmId, List<Sensor> sensors, List<CropType> cropTypes) {
+        List<AverageMeasure> averageMeasures = new ArrayList<>();
+        loadSensorsAverageMeasures(farmId, sensors, averageMeasures);
+        return checkAverageMeasuresForCropTypes(averageMeasures, cropTypes);
+    }
+
+    private Collection<String> checkSectorSensorsValues(String farmId, Sector sector, List<CropType> cropTypes) {
+        List<AverageMeasure> averageMeasures = new ArrayList<>();
+        loadSensorsAverageMeasures(farmId, sector.getSensors(), averageMeasures);
+        return checkAverageMeasuresForCropTypes(averageMeasures, cropTypes);
+    }
+
+    private Collection<String> checkAverageMeasuresForCropTypes(List<AverageMeasure> averageMeasures, List<CropType> cropTypes) {
+        List<String> notOkValues = new ArrayList<>();
         averageMeasures.forEach(averageMeasure -> {
             cropTypes.forEach(cropType -> {
                 AverageMeasure.AverageMeasureLevel measureLevel = cropType.checkAverageMeasure(averageMeasure);
-                if(measureLevel==AverageMeasure.AverageMeasureLevel.BELOW_MIN){
+                if (measureLevel == AverageMeasure.AverageMeasureLevel.BELOW_MIN) {
                     averageMeasure.addBelowMinFor(cropType.getName());
-                } else if(measureLevel==AverageMeasure.AverageMeasureLevel.OVER_MAX){
+                } else if (measureLevel == AverageMeasure.AverageMeasureLevel.OVER_MAX) {
                     averageMeasure.addOverMaxFor(cropType.getName());
                 }
             });
             String msg = averageMeasure.getNotificationMsg();
-            if(msg!=null)
-                farmNotOkValues.add(msg);
+            if (msg != null)
+                notOkValues.add(msg);
         });
-
-        return farmNotOkValues;
+        return notOkValues;
     }
 
     private boolean notificationSentRecently(String farmId) {
@@ -106,12 +119,12 @@ public class MeasuresControlSchedule {
                         ParameterOutOfRangeNotification.class.getName(),
                         NotificationStatus.SENT.name()
                 );
-        ParameterOutOfRangeNotification notification = notifications.get(0);
-        if(notification==null)
+        if (notifications == null || notifications.isEmpty())
             return false;
+        ParameterOutOfRangeNotification notification = notifications.get(0);
         Date currentDate = new Date();
         long timeToResend = DynamicConfigurationProperties.getDynamicConfiguration().getTimeToReSendNotification();
-        return (currentDate.getTime() - notification.getDate().getTime()) < timeToResend;
+        return (currentDate.getTime() - notification.getDate().getTime()) < TimeUnit.MINUTES.toMillis(timeToResend);
     }
 
     private void loadSensorsAverageMeasures(String farmId, List<Sensor> sensors, List<AverageMeasure> averageMeasures) {
@@ -124,7 +137,7 @@ public class MeasuresControlSchedule {
 
     private AverageMeasure getSensorAvgMeasure(String farmId, Sensor sensor) {
         List<Measure> measures = measureDAO.findTop5ByFarmIdAndSensorCodeOrderByDateTime(farmId, sensor.getCode());
-        if (measures!=null && !measures.isEmpty()) {
+        if (measures != null && !measures.isEmpty()) {
             float average = 0;
             int validMeasureCount = 0;
             for (Measure measure : measures) {

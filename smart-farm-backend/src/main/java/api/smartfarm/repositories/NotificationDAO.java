@@ -11,7 +11,7 @@ public interface NotificationDAO extends MongoRepository<SmartFarmNotification, 
 
     List<SmartFarmNotification> findByFarmId(String farmId);
 
-    @Query(value = "{'farmId':?0, '_class': ?1, 'status': ?2}")
+    @Query(value = "{'farmId':?0, '_class': ?1, 'status': ?2}", sort= "{'date':-1}")
     List<ParameterOutOfRangeNotification> findByFarmIdAndClassAndStatusOrderByDate(String farmId, String className, String status);
 
 }
