@@ -2,6 +2,8 @@ package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Measure;
 import api.smartfarm.models.dtos.AverageMeasureHistoricDTO;
+import api.smartfarm.models.entities.AverageMeasure;
+import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.entities.SensorDateFilter;
 import api.smartfarm.models.exceptions.DateParseException;
 import api.smartfarm.repositories.MeasureDAO;
@@ -37,7 +39,11 @@ public class MeasureService {
         LOGGER.info("Measure created with id {}", measure.getId());
     }
 
-    public List<AverageMeasureHistoricDTO> getAverageMeasureBySensorCode(String farmId, String sensorCode, SensorDateFilter sensorDateFilter) {
+    public List<AverageMeasureHistoricDTO> getAverageMeasureBySensorCode(
+        String farmId,
+        String sensorCode,
+        SensorDateFilter sensorDateFilter
+    ) {
         Date dateFrom = new Date();
         ZonedDateTime today = LocalDate.now().atStartOfDay(ZoneId.systemDefault());
         switch (sensorDateFilter) {
@@ -89,5 +95,35 @@ public class MeasureService {
         });
 
         return averageMeasureHistoricDTOs;
+    }
+
+    public List<AverageMeasure> getAverageMeasures(String farmId, List<Sensor> sensors) {
+        List<AverageMeasure> averageMeasures = new ArrayList<>();
+        sensors.forEach(sensor -> {
+            AverageMeasure averageMeasure = getSensorAvgMeasure(farmId, sensor);
+            if (averageMeasure != null)
+                averageMeasures.add(averageMeasure);
+        });
+
+        return averageMeasures;
+    }
+
+    private AverageMeasure getSensorAvgMeasure(String farmId, Sensor sensor) {
+        List<Measure> measures = measureDAO.findTop5ByFarmIdAndSensorCodeOrderByDateTimeDesc(farmId, sensor.getCode());
+        if (!measures.isEmpty()) {
+            Double totalValue = 0.0;
+            int validMeasureCount = 0;
+            for (Measure measure : measures) {
+                if (!Sensor.ERROR_VALUE.equals(measure.getValue())) {
+                    totalValue += measure.getValue();
+                    validMeasureCount++;
+                }
+            }
+            if (validMeasureCount > 0) {
+                Double average = totalValue / validMeasureCount;
+                return new AverageMeasure(average, sensor.getSensorTypeId());
+            }
+        }
+        return null;
     }
 }

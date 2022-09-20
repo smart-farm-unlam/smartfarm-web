@@ -2,14 +2,10 @@ package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
-import api.smartfarm.models.documents.notifications.NotificationStatus;
-import api.smartfarm.models.documents.notifications.ParameterOutOfRangeNotification;
-import api.smartfarm.models.documents.notifications.SensorFailNotification;
-import api.smartfarm.models.documents.notifications.SmartFarmNotification;
+import api.smartfarm.models.documents.notifications.*;
 import api.smartfarm.models.dtos.notifications.NotificationDTO;
 import api.smartfarm.models.dtos.notifications.SensorFailNotificationDTO;
 import api.smartfarm.models.entities.Sector;
-import api.smartfarm.models.exceptions.InvalidNotificationException;
 import api.smartfarm.repositories.NotificationDAO;
 import com.google.firebase.messaging.*;
 import org.slf4j.Logger;
@@ -17,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,16 +29,31 @@ public class NotificationService {
 
     @Autowired
     public NotificationService(
-            NotificationDAO notificationDAO,
-            UserService userService
+        NotificationDAO notificationDAO,
+        UserService userService
     ) {
         this.notificationDAO = notificationDAO;
         this.userService = userService;
     }
 
+    public boolean notificationSentRecently(String farmId, long minutesToCheck, NotificationType type) {
+        Optional<ParameterOutOfRangeNotification> lastNotification = notificationDAO
+            .findTop1ByFarmIdAndTypeAndStatusOrderByDateDesc(
+                farmId,
+                type.getDescription(),
+                NotificationStatus.SENT
+            );
+        if (!lastNotification.isPresent())
+            return false;
+
+        Date currentDate = new Date();
+        long minutesAfterLastNotification = ChronoUnit.MINUTES.between(lastNotification.get().getDate().toInstant(), currentDate.toInstant());
+        return minutesAfterLastNotification < minutesToCheck;
+    }
+
     public void sendSensorFailNotification(
-            String sensorCode,
-            Farm farm
+        String sensorCode,
+        Farm farm
     ) {
         User user = userService.getUserById(farm.getUserId());
 
@@ -58,13 +70,13 @@ public class NotificationService {
         SmartFarmNotification sfNotification = buildSensorFailNotification(farm, user, sensorCode);
 
         sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
-        sfNotification = notificationDAO.save(sfNotification);
-        LOGGER.info("Notification created with id {}", sfNotification.getId());
+        saveNotification(sfNotification);
     }
 
     public void sendParameterOutOfRange(
-            String notificationBody,
-            Farm farm) {
+        String notificationBody,
+        Farm farm
+    ) {
 
         User user = userService.getUserById(farm.getUserId());
 
@@ -74,50 +86,78 @@ public class NotificationService {
         SmartFarmNotification sfNotification = buildParameterOutOfRangeNotification(farm, user);
 
         sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
-        sfNotification = notificationDAO.save(sfNotification);
-        LOGGER.info("Notification created with id {}", sfNotification.getId());
+        saveNotification(sfNotification);
+    }
+
+    public void sendWeatherAlertCondition(
+        String title,
+        String body,
+        Farm farm
+    ) {
+        User user = userService.getUserById(farm.getUserId());
+
+        Notification notification = buildNotification(title, body);
+        MulticastMessage message = buildMessage(notification, user);
+        SmartFarmNotification sfNotification = buildWeatherAlertNotification(farm, user);
+
+        sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
+        saveNotification(sfNotification);
     }
 
     private SensorFailNotification buildSensorFailNotification(Farm farm, User user, String sensorCode) {
         return new SensorFailNotification(
-                new Date(),
-                farm.getId(),
-                user.getId(),
-                user.getDeviceIds(),
-                sensorCode
+            new Date(),
+            farm.getId(),
+            user.getId(),
+            user.getDeviceIds(),
+            sensorCode
         );
     }
 
     private ParameterOutOfRangeNotification buildParameterOutOfRangeNotification(Farm farm, User user) {
         return new ParameterOutOfRangeNotification(
-                new Date(),
-                farm.getId(),
-                user.getId(),
-                user.getDeviceIds()
+            new Date(),
+            farm.getId(),
+            user.getId(),
+            user.getDeviceIds()
+        );
+    }
+
+    private WeatherAlertNotification buildWeatherAlertNotification(Farm farm, User user) {
+        return new WeatherAlertNotification(
+            new Date(),
+            farm.getId(),
+            user.getId(),
+            user.getDeviceIds()
         );
     }
 
     private Notification buildNotification(String title, String body) {
         return Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
+            .setTitle(title)
+            .setBody(body)
+            .build();
     }
 
     private MulticastMessage buildMessage(Notification notification, String sectorCode, String sensorCode, User user) {
         return MulticastMessage.builder()
-                .setNotification(notification)
-                .putData("sectorCode", sectorCode)
-                .putData("sensorCode", sensorCode)
-                .addAllTokens(user.getDeviceIds())
-                .build();
+            .setNotification(notification)
+            .putData("sectorCode", sectorCode)
+            .putData("sensorCode", sensorCode)
+            .addAllTokens(user.getDeviceIds())
+            .build();
     }
 
     private MulticastMessage buildMessage(Notification notification, User user) {
         return MulticastMessage.builder()
-                .setNotification(notification)
-                .addAllTokens(user.getDeviceIds())
-                .build();
+            .setNotification(notification)
+            .addAllTokens(user.getDeviceIds())
+            .build();
+    }
+
+    private void saveNotification(SmartFarmNotification sfNotification) {
+        sfNotification = notificationDAO.save(sfNotification);
+        LOGGER.info("Notification created with id {}", sfNotification.getId());
     }
 
     private NotificationStatus sendPushNotification(MulticastMessage message, SmartFarmNotification sfNotification, User user) {
@@ -145,14 +185,15 @@ public class NotificationService {
     }
 
     public List<NotificationDTO> getNotifications(String farmId) {
-        List<SmartFarmNotification> notifications = notificationDAO.findByFarmId(farmId);
+        List<SmartFarmNotification> notifications = notificationDAO.findByFarmIdAndStatus(farmId, NotificationStatus.SENT);
 
         return notifications.stream().map(it -> {
             if (it instanceof SensorFailNotification) {
                 SensorFailNotification sensorFailNotification = (SensorFailNotification) it;
                 return new SensorFailNotificationDTO(sensorFailNotification);
+            } else {
+                return new NotificationDTO(it);
             }
-            throw new InvalidNotificationException("NotificationDTO " + it.getClass().getSimpleName() + " not supported");
         }).collect(Collectors.toList());
     }
 }

@@ -22,18 +22,21 @@ public abstract class SmartFarmNotification {
     private List<String> devices;
     private NotificationStatus status;
     private List<String> messageIds;
+    private String type;
 
     protected SmartFarmNotification(
         Date date,
         String farmId,
         String userId,
-        List<String> devices
+        List<String> devices,
+        String type
     ) {
         this.date = date;
         this.farmId = farmId;
         this.userId = userId;
         this.devices = devices;
         this.messageIds = new ArrayList<>();
+        this.type = type;
     }
 
     public void addMessageId(String messageId) {

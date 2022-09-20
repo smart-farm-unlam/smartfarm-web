@@ -163,4 +163,8 @@ public class FarmService {
         }
     }
 
+    public List<Farm> findAll() {
+        return farmDAO.findAll();
+    }
+
 }

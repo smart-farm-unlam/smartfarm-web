@@ -31,35 +31,35 @@ public class AverageMeasure {
     }
 
     public void addBelowMinFor(String cropName) {
-        if(isBelowMinFor==null)
+        if (isBelowMinFor == null)
             isBelowMinFor = new ArrayList<>();
         isBelowMinFor.add(cropName);
     }
 
     public void addOverMaxFor(String cropName) {
-        if(isOverMaxFor==null)
+        if (isOverMaxFor == null)
             isOverMaxFor = new ArrayList<>();
         isOverMaxFor.add(cropName);
     }
 
     public String getNotificationMsg() {
-        if(isOverMaxFor!=null && !isOverMaxFor.isEmpty()) {
-            return formatNotificationMsg(OVER_MAX_MSG,isOverMaxFor);
-        } else if (isBelowMinFor!=null && !isBelowMinFor.isEmpty()) {
-            return formatNotificationMsg(BELOW_MIN_MSG,isBelowMinFor);
+        if (isOverMaxFor != null && !isOverMaxFor.isEmpty()) {
+            return formatNotificationMsg(OVER_MAX_MSG, isOverMaxFor);
+        } else if (isBelowMinFor != null && !isBelowMinFor.isEmpty()) {
+            return formatNotificationMsg(BELOW_MIN_MSG, isBelowMinFor);
         }
         return null;
     }
 
     private String formatNotificationMsg(String baseFormat, List<String> cropNamesList) {
         return String.format(
-                baseFormat,
-                sensorTypeId.getDescription(),
-                String.join(", ",cropNamesList)
+            baseFormat,
+            sensorTypeId.getDescription(),
+            String.join(", ", cropNamesList)
         );
     }
 
-    public enum AverageMeasureLevel{
+    public enum AverageMeasureLevel {
         OVER_MAX,
         BELOW_MIN,
         NORMAL

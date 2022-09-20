@@ -20,7 +20,7 @@ public class SensorFailNotification extends SmartFarmNotification {
         List<String> devices,
         String sensorCode
     ) {
-        super(date, farmId, userId, devices);
+        super(date, farmId, userId, devices, NotificationType.SENSOR_FAIL_NOTIFICATION.getDescription());
         this.sensorCode = sensorCode;
     }
 }

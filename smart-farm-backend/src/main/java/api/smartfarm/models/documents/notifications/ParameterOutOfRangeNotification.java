@@ -12,11 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 public class ParameterOutOfRangeNotification extends SmartFarmNotification {
     public ParameterOutOfRangeNotification(
-            Date date,
-            String farmId,
-            String userId,
-            List<String> devices
+        Date date,
+        String farmId,
+        String userId,
+        List<String> devices
     ) {
-        super(date, farmId, userId, devices);
+        super(date, farmId, userId, devices, NotificationType.PARAMETER_OUT_OF_RANGE.getDescription());
     }
 }

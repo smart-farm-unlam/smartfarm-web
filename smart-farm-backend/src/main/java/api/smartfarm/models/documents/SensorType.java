@@ -21,12 +21,11 @@ public class SensorType {
 
     @Getter
     public enum SensorTypeId {
-        AT("Ambient Temperature"),
-        AH("Ambient Humidity"),
-        SH("Soil Humidity"),
-        ST("Soil Temperature"),
-        LL("Light Level"),
-        BS("Brightness Level");
+        AT("Temperatura Ambiente"),
+        AH("Humedad Ambiente"),
+        SH("Humedad de la tierra"),
+        ST("Temperatura de la tierra"),
+        LL("Nivel de Luz");
 
         private final String description;
 

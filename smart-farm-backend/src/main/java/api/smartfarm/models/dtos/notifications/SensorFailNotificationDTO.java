@@ -13,7 +13,12 @@ public class SensorFailNotificationDTO extends NotificationDTO {
     private String sensorCode;
 
     public SensorFailNotificationDTO(SensorFailNotification sensorFailNotification) {
-        super(sensorFailNotification.getDate(), sensorFailNotification.getFarmId(), sensorFailNotification.getUserId());
+        super(
+            sensorFailNotification.getDate(),
+            sensorFailNotification.getFarmId(),
+            sensorFailNotification.getUserId(),
+            sensorFailNotification.getType()
+        );
         this.sensorCode = sensorFailNotification.getSensorCode();
     }
 }

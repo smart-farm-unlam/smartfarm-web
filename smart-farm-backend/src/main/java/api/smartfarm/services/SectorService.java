@@ -13,7 +13,6 @@ import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
 import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.exceptions.NotFoundException;
-import api.smartfarm.repositories.CropTypeDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +26,17 @@ import java.util.stream.Collectors;
 public class SectorService {
 
     private final FarmService farmService;
-    private final CropTypeDAO cropTypeDAO;
+    private final CropTypeService cropTypeService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SectorService.class);
 
     @Autowired
-    public SectorService(FarmService farmService, CropTypeDAO cropTypeDAO) {
+    public SectorService(
+        FarmService farmService,
+        CropTypeService cropTypeService
+    ) {
         this.farmService = farmService;
-        this.cropTypeDAO = cropTypeDAO;
+        this.cropTypeService = cropTypeService;
     }
 
     public List<SectorResponseDTO> getSectors(String farmId) {
@@ -51,10 +53,8 @@ public class SectorService {
         LOGGER.info("Getting sectors + cropType from farmId: {}", farmId);
         return farm.getSectors().stream().map(sector -> {
             String id = sector.getCrop().getType();
-            CropType cropType = cropTypeDAO.findById(id).orElseThrow(() -> {
-                String errorMsg = "CropType with id " + id + " not exists on database";
-                return new NotFoundException(errorMsg);
-            });
+            CropType cropType = cropTypeService.findById(id);
+
             if ("microcontroller".equals(source)) {
                 cropType.setOptimalEnvironment(null);
                 cropType.setPlantation(null);
@@ -67,7 +67,7 @@ public class SectorService {
     }
 
     public SectorResponseDTO addSector(String farmId, AddSectorRequestDTO sectorRequestDTO) {
-        CropType cropType = getCropType(sectorRequestDTO.getCropType());
+        CropType cropType = cropTypeService.findById(sectorRequestDTO.getCropType());
 
         Farm farm = farmService.getFarmById(farmId);
         List<Sector> sectors = farm.getSectors();
@@ -103,7 +103,7 @@ public class SectorService {
     }
 
     public void setSectorCropType(Farm farm, CropDTO cropDTO) {
-        getCropType(cropDTO.getType());
+        cropTypeService.findById(cropDTO.getType());
         Sector sector = findSectorInFarm(farm, cropDTO.getSectorCode());
         sector.setCrop(new Crop(cropDTO));
         farmService.update(farm);
@@ -165,7 +165,4 @@ public class SectorService {
             );
     }
 
-    private CropType getCropType(String id) {
-        return cropTypeDAO.findById(id).orElseThrow(() -> new NotFoundException("Crop type: " + id + " not found in database"));
-    }
 }

@@ -1,110 +1,96 @@
 package api.smartfarm.schedules;
 
-import api.smartfarm.config.DynamicConfigurationProperties;
 import api.smartfarm.models.documents.CropType;
+import api.smartfarm.models.documents.DynamicConfiguration;
 import api.smartfarm.models.documents.Farm;
-import api.smartfarm.models.documents.Measure;
-import api.smartfarm.models.documents.notifications.NotificationStatus;
-import api.smartfarm.models.documents.notifications.ParameterOutOfRangeNotification;
+import api.smartfarm.models.documents.notifications.NotificationType;
 import api.smartfarm.models.entities.AverageMeasure;
 import api.smartfarm.models.entities.Sector;
-import api.smartfarm.models.entities.Sensor;
-import api.smartfarm.models.exceptions.NotFoundException;
-import api.smartfarm.repositories.CropTypeDAO;
-import api.smartfarm.repositories.FarmDAO;
-import api.smartfarm.repositories.MeasureDAO;
-import api.smartfarm.repositories.NotificationDAO;
+import api.smartfarm.services.CropTypeService;
+import api.smartfarm.services.FarmService;
+import api.smartfarm.services.MeasureService;
 import api.smartfarm.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
+
+import static api.smartfarm.models.entities.AverageMeasure.AverageMeasureLevel;
 
 @Component
 public class MeasuresControlSchedule {
 
-    private final FarmDAO farmDAO;
-
-    private final CropTypeDAO cropTypeDAO;
-
-    private final MeasureDAO measureDAO;
-
-    private final NotificationDAO notificationDAO;
-
-    NotificationService notificationService;
+    private final FarmService farmService;
+    private final CropTypeService cropTypeService;
+    private final MeasureService measureService;
+    private final NotificationService notificationService;
+    private final DynamicConfiguration measuresCronConfiguration;
 
     @Autowired
     public MeasuresControlSchedule(
-            FarmDAO farmDAO,
-            CropTypeDAO cropTypeDAO,
-            MeasureDAO measureDAO,
-            NotificationDAO notificationDAO,
-            NotificationService notificationService) {
-        this.farmDAO = farmDAO;
-        this.cropTypeDAO = cropTypeDAO;
-        this.measureDAO = measureDAO;
-        this.notificationDAO = notificationDAO;
+        FarmService farmService,
+        CropTypeService cropTypeService,
+        MeasureService measureService,
+        NotificationService notificationService,
+        DynamicConfiguration measuresCronConfiguration
+    ) {
+        this.farmService = farmService;
+        this.cropTypeService = cropTypeService;
+        this.measureService = measureService;
         this.notificationService = notificationService;
+        this.measuresCronConfiguration = measuresCronConfiguration;
     }
 
-    @Scheduled(cron = "#{@cronInterval}")
+    @Scheduled(cron = "#{@measuresCronInterval}")
     void checkFarmsMeasuresSchedule() {
-        List<Farm> farms = farmDAO.findAll();
+        List<Farm> farms = farmService.findAll();
         farms.forEach(this::checkFarmMeasures);
     }
 
     private void checkFarmMeasures(Farm farm) {
-        List<String> farmNotOkValues = getNotOkValues(farm);
+        List<String> parametersOutOfRangeMessages = buildParameterOutOfRangeMessages(farm);
 
-        if (!farmNotOkValues.isEmpty() && !notificationSentRecently(farm.getId()))
-            notificationService.sendParameterOutOfRange(String.join("\n", farmNotOkValues), farm);
+        boolean notificationSentRecently = notificationService.notificationSentRecently(
+            farm.getId(),
+            measuresCronConfiguration.getTimeToReSendNotification(),
+            NotificationType.PARAMETER_OUT_OF_RANGE
+        );
+
+        if (!parametersOutOfRangeMessages.isEmpty() && !notificationSentRecently) {
+            String body = String.join("\n", parametersOutOfRangeMessages);
+            notificationService.sendParameterOutOfRange(body, farm);
+        }
     }
 
-    private List<String> getNotOkValues(Farm farm) {
-        List<String> notOkValues = new ArrayList<>();
-        List<CropType> cropTypes = new ArrayList<>();
+    private List<String> buildParameterOutOfRangeMessages(Farm farm) {
+        List<String> parametersOutOfRangeMessages = new ArrayList<>();
         List<Sector> farmSectors = farm.getSectors();
 
         farmSectors.forEach(sector -> {
-            CropType cropType = cropTypeDAO.findById(sector.getCrop().getType()).orElseThrow(() -> {
-                String errorMsg = "No crop type " + sector.getCrop().getType() + " was found on database";
-                return new NotFoundException(errorMsg);
-            });
-            cropTypes.add(cropType);
-            notOkValues.addAll(
-                    checkSectorSensorsValues(farm.getId(), sector, Collections.singletonList(cropType))
-            );
+            CropType cropType = cropTypeService.findById(sector.getCrop().getType());
+            parametersOutOfRangeMessages.addAll(checkSectorSensorsValues(farm.getId(), sector, cropType));
         });
 
-        notOkValues.addAll(checkFarmSensorsValues(farm.getId(), farm.getSensors(), cropTypes));
-        return notOkValues;
+        return parametersOutOfRangeMessages;
     }
 
-    private Collection<String> checkFarmSensorsValues(String farmId, List<Sensor> sensors, List<CropType> cropTypes) {
-        List<AverageMeasure> averageMeasures = new ArrayList<>();
-        loadSensorsAverageMeasures(farmId, sensors, averageMeasures);
-        return checkAverageMeasuresForCropTypes(averageMeasures, cropTypes);
+    private List<String> checkSectorSensorsValues(String farmId, Sector sector, CropType cropType) {
+        List<AverageMeasure> averageMeasures = measureService.getAverageMeasures(farmId, sector.getSensors());
+        return checkAverageMeasuresForCropType(averageMeasures, cropType);
     }
 
-    private Collection<String> checkSectorSensorsValues(String farmId, Sector sector, List<CropType> cropTypes) {
-        List<AverageMeasure> averageMeasures = new ArrayList<>();
-        loadSensorsAverageMeasures(farmId, sector.getSensors(), averageMeasures);
-        return checkAverageMeasuresForCropTypes(averageMeasures, cropTypes);
-    }
-
-    private Collection<String> checkAverageMeasuresForCropTypes(List<AverageMeasure> averageMeasures, List<CropType> cropTypes) {
+    private List<String> checkAverageMeasuresForCropType(List<AverageMeasure> averageMeasures, CropType cropType) {
         List<String> notOkValues = new ArrayList<>();
         averageMeasures.forEach(averageMeasure -> {
-            cropTypes.forEach(cropType -> {
-                AverageMeasure.AverageMeasureLevel measureLevel = cropType.checkAverageMeasure(averageMeasure);
-                if (measureLevel == AverageMeasure.AverageMeasureLevel.BELOW_MIN) {
-                    averageMeasure.addBelowMinFor(cropType.getName());
-                } else if (measureLevel == AverageMeasure.AverageMeasureLevel.OVER_MAX) {
-                    averageMeasure.addOverMaxFor(cropType.getName());
-                }
-            });
+            AverageMeasureLevel measureLevel = cropType.checkAverageMeasure(averageMeasure);
+
+            if (measureLevel == AverageMeasureLevel.BELOW_MIN) {
+                averageMeasure.addBelowMinFor(cropType.getName());
+            } else if (measureLevel == AverageMeasureLevel.OVER_MAX) {
+                averageMeasure.addOverMaxFor(cropType.getName());
+            }
             String msg = averageMeasure.getNotificationMsg();
             if (msg != null)
                 notOkValues.add(msg);
@@ -112,44 +98,4 @@ public class MeasuresControlSchedule {
         return notOkValues;
     }
 
-    private boolean notificationSentRecently(String farmId) {
-        List<ParameterOutOfRangeNotification> notifications = notificationDAO
-                .findByFarmIdAndClassAndStatusOrderByDate(
-                        farmId,
-                        ParameterOutOfRangeNotification.class.getName(),
-                        NotificationStatus.SENT.name()
-                );
-        if (notifications == null || notifications.isEmpty())
-            return false;
-        ParameterOutOfRangeNotification notification = notifications.get(0);
-        Date currentDate = new Date();
-        long timeToResend = DynamicConfigurationProperties.getDynamicConfiguration().getTimeToReSendNotification();
-        return (currentDate.getTime() - notification.getDate().getTime()) < TimeUnit.MINUTES.toMillis(timeToResend);
-    }
-
-    private void loadSensorsAverageMeasures(String farmId, List<Sensor> sensors, List<AverageMeasure> averageMeasures) {
-        sensors.forEach(sensor -> {
-            AverageMeasure averageMeasure = getSensorAvgMeasure(farmId, sensor);
-            if (averageMeasure != null)
-                averageMeasures.add(averageMeasure);
-        });
-    }
-
-    private AverageMeasure getSensorAvgMeasure(String farmId, Sensor sensor) {
-        List<Measure> measures = measureDAO.findTop5ByFarmIdAndSensorCodeOrderByDateTime(farmId, sensor.getCode());
-        if (measures != null && !measures.isEmpty()) {
-            float average = 0;
-            int validMeasureCount = 0;
-            for (Measure measure : measures) {
-                if (!Objects.equals(measure.getValue(), Sensor.ERROR_VALUE)) {
-                    average += measure.getValue();
-                    validMeasureCount++;
-                }
-            }
-            if (validMeasureCount > 0)
-                return new AverageMeasure((double) (average / validMeasureCount),
-                        sensor.getSensorTypeId());
-        }
-        return null;
-    }
 }
