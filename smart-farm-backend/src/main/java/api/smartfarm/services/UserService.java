@@ -1,5 +1,6 @@
 package api.smartfarm.services;
 
+import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
 import api.smartfarm.models.dtos.users.LoginUserRequestDTO;
 import api.smartfarm.models.dtos.users.UpdateUserRequestDTO;
@@ -17,12 +18,14 @@ import java.util.Optional;
 public class UserService {
 
     private final UserDAO userDAO;
+    private final FarmService farmService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
-    public UserService(UserDAO userDAO) {
+    public UserService(UserDAO userDAO, FarmService farmService) {
         this.userDAO = userDAO;
+        this.farmService = farmService;
     }
 
     public UserResponseDTO getById(String id) {
@@ -48,9 +51,10 @@ public class UserService {
             LOGGER.info("User with email {} not exists on database", loginUserRequest.getEmail());
             return Optional.empty();
         }
-
         LOGGER.info("User found: {}", user);
-        return Optional.of(new UserResponseDTO(user));
+
+        Farm farm = farmService.getFarmByUserId(user.getId());
+        return Optional.of(new UserResponseDTO(user, farm.getId()));
     }
 
     public UserResponseDTO createNewUser(LoginUserRequestDTO loginUserRequestDTO) {
@@ -58,7 +62,11 @@ public class UserService {
 
         userDAO.save(user);
         LOGGER.info("Create user {} successfully", user);
-        return new UserResponseDTO(user);
+
+        LOGGER.info("Creating new farm for user {}", user.getEmail());
+        Farm farm = farmService.create(user);
+
+        return new UserResponseDTO(user, farm.getId());
     }
 
     public UserResponseDTO update(String id, UpdateUserRequestDTO updateUserRequest) {

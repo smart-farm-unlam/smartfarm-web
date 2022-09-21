@@ -6,7 +6,6 @@ import api.smartfarm.clients.weather.model.LocationData;
 import api.smartfarm.clients.weather.model.WeatherData;
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.User;
-import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.UpdateFarmRequestDTO;
@@ -16,7 +15,7 @@ import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.exceptions.NotFoundException;
 import api.smartfarm.repositories.EventDAO;
 import api.smartfarm.repositories.FarmDAO;
-import api.smartfarm.repositories.UserDAO;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +23,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class FarmService {
 
     private final FarmDAO farmDAO;
-    private final UserDAO userDAO;
     private final WeatherClient weatherClient;
     private final EventDAO eventDAO;
 
@@ -40,28 +37,21 @@ public class FarmService {
     @Autowired
     public FarmService(
         FarmDAO farmDAO,
-        UserDAO userDAO,
         WeatherClient weatherClient,
         EventDAO eventDAO
     ) {
         this.farmDAO = farmDAO;
-        this.userDAO = userDAO;
         this.weatherClient = weatherClient;
         this.eventDAO = eventDAO;
     }
 
-    public FarmResponseDTO create(CreateFarmRequestDTO createFarmRequest) {
-        Optional<User> user = userDAO.findById(createFarmRequest.getUserId());
-        if (!user.isPresent()) {
-            String errorMsg = "User with id " + createFarmRequest.getUserId() + "not exists on database";
-            throw new NotFoundException(errorMsg);
-        }
-
-        Farm farm = new Farm(createFarmRequest);
+    public Farm create(User user) {
+        String farmName = "Farm-".concat(RandomStringUtils.randomAlphabetic(5));
+        Farm farm = new Farm(farmName, user.getId());
         farmDAO.save(farm);
         LOGGER.info("Farm created with id {}", farm.getId());
 
-        return new FarmResponseDTO(farm);
+        return farm;
     }
 
     //calcular si la ultima medición es de hace menos de 15 minutos y si es mayor
@@ -165,6 +155,15 @@ public class FarmService {
 
     public List<Farm> findAll() {
         return farmDAO.findAll();
+    }
+
+    public Farm getFarmByUserId(String userId) {
+        LOGGER.info("Getting farm by userId {}", userId);
+
+        return farmDAO.findByUserId(userId).orElseThrow(() -> {
+            String errorMsg = "Farm with userId " + userId + " not exists on database";
+            return new NotFoundException(errorMsg);
+        });
     }
 
 }

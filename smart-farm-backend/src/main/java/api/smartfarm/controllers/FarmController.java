@@ -1,6 +1,5 @@
 package api.smartfarm.controllers;
 
-import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.FarmResponseDTO;
 import api.smartfarm.models.dtos.farms.InitFarmRequestDTO;
 import api.smartfarm.models.dtos.farms.UpdateFarmRequestDTO;
@@ -31,12 +30,6 @@ public class FarmController {
     ) {
         this.farmService = farmService;
         this.notificationService = notificationService;
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public FarmResponseDTO create(@Valid @RequestBody CreateFarmRequestDTO createRequest) {
-        return farmService.create(createRequest);
     }
 
     @GetMapping("/{id}")

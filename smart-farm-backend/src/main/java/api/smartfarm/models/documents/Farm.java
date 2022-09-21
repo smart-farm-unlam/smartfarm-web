@@ -1,6 +1,5 @@
 package api.smartfarm.models.documents;
 
-import api.smartfarm.models.dtos.farms.CreateFarmRequestDTO;
 import api.smartfarm.models.entities.Crop;
 import api.smartfarm.models.entities.Plant;
 import api.smartfarm.models.entities.Sector;
@@ -33,9 +32,9 @@ public class Farm {
     private Double longitude;
     private String locationKey;
 
-    public Farm(CreateFarmRequestDTO createFarmRequestDTO) {
-        this.name = createFarmRequestDTO.getName();
-        this.userId = createFarmRequestDTO.getUserId();
+    public Farm(String name, String userId) {
+        this.name = name;
+        this.userId = userId;
         this.sensors = new ArrayList<>();
         this.sectors = new ArrayList<>();
         this.events = new ArrayList<>();

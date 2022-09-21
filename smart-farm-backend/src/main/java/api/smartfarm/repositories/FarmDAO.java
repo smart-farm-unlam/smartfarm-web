@@ -12,4 +12,6 @@ public interface FarmDAO extends MongoRepository<Farm, String> {
     @Query(value="{'_id': ?0, 'sectors.crop.plants.id': ?1}")
     Optional<Farm> findByIdAndSectorsCropPlantsId(String farmId, String plantId);
 
+    Optional<Farm> findByUserId(String userId);
+
 }

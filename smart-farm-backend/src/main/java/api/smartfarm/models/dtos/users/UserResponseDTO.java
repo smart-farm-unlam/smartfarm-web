@@ -17,11 +17,20 @@ public class UserResponseDTO {
     private String username;
     private String email;
     private List<String> deviceIds;
+    private String farmId;
 
     public UserResponseDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.deviceIds = user.getDeviceIds();
+    }
+
+    public UserResponseDTO(User user, String farmId) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.deviceIds = user.getDeviceIds();
+        this.farmId = farmId;
     }
 }

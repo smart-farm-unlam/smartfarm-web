@@ -1,5 +1,6 @@
 package api.smartfarm.models.dtos.weather;
 
+import api.smartfarm.clients.weather.model.Temperature;
 import api.smartfarm.clients.weather.model.WeatherData;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,10 @@ public class WeatherResponseDTO {
     private String windSpeed;
     private int uvIndex;
     private String precipitation;
+    private String alertTemperature;
+
+    private static final Double TOO_COLD_LIMIT = 2.0;
+    private static final Double TOO_HOT_LIMIT = 35.0;
 
     public WeatherResponseDTO(WeatherData weatherData) {
         this.dateTime = new Date();
@@ -29,5 +34,18 @@ public class WeatherResponseDTO {
         this.windSpeed = weatherData.getWind().getSpeed().getMetric().getCompleteValue();
         this.uvIndex = weatherData.getUvIndex();
         this.precipitation = weatherData.getPrecipitation().getMetric().getCompleteValue();
+        this.alertTemperature = buildTemperatureAlert(weatherData.getTemperature());
+    }
+
+    private String buildTemperatureAlert(Temperature temperature) {
+        String result = null;
+
+        if(temperature.getMetric().getValue() <= TOO_COLD_LIMIT) {
+            result = "TOO_COLD";
+        } else if (temperature.getMetric().getValue() >= TOO_HOT_LIMIT){
+            result = "TOO_HOT";
+        }
+
+        return result;
     }
 }
