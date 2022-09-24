@@ -11,6 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class SensorFailNotification extends SmartFarmNotification {
+
     private String sensorCode;
 
     public SensorFailNotification(
@@ -18,9 +19,19 @@ public class SensorFailNotification extends SmartFarmNotification {
         String farmId,
         String userId,
         List<String> devices,
-        String sensorCode
+        String sensorCode,
+        String title,
+        String body
     ) {
-        super(date, farmId, userId, devices, NotificationType.SENSOR_FAIL_NOTIFICATION.getDescription());
+        super(
+            date,
+            farmId,
+            userId,
+            devices,
+            NotificationType.SENSOR_FAIL_NOTIFICATION.getDescription(),
+            title,
+            body
+        );
         this.sensorCode = sensorCode;
     }
 }

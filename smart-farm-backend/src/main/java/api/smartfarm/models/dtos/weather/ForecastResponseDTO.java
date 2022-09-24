@@ -16,6 +16,7 @@ public class ForecastResponseDTO {
     private String maxTemperature;
     private ForecastDataDTO day;
     private ForecastDataDTO night;
+    private String alertTemperature;
 
     public ForecastResponseDTO(DailyForecast dailyForecast) {
         this.date = dailyForecast.getDate();
@@ -23,5 +24,9 @@ public class ForecastResponseDTO {
         this.maxTemperature = dailyForecast.getTemperature().getMaximum().getCelsiusValue();
         this.day = new ForecastDataDTO(dailyForecast.getDay());
         this.night = new ForecastDataDTO(dailyForecast.getNight());
+        this.alertTemperature = AlertTemperature.buildTemperatureAlert(
+            dailyForecast.getTemperature().getMinimum().getValue(),
+            dailyForecast.getTemperature().getMaximum().getValue()
+        );
     }
 }

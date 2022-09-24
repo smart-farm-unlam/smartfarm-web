@@ -43,7 +43,8 @@ public class WeatherEventsSchedule {
     @Scheduled(cron = "#{@weatherCronInterval}")
     void checkWeatherConditionsSchedule() {
         List<Farm> farms = farmService.findAll();
-        farms.forEach(this::alertWeatherConditions);
+        farms.stream().filter(it -> it.getLocationKey() != null)
+            .forEach(this::alertWeatherConditions);
     }
 
     private void alertWeatherConditions(Farm farm) {
@@ -51,11 +52,10 @@ public class WeatherEventsSchedule {
 
         if (!futureForecastData.getDailyForecasts().isEmpty()) {
             DailyForecast tomorrowForecast = futureForecastData.getDailyForecasts().get(TOMORROW_INDEX);
-
-            String title = buildTitle();
             String body = checkWeatherConditions(tomorrowForecast);
 
             if (body != null) {
+                String title = buildTitle();
                 notificationService.sendWeatherAlertCondition(title, body, farm);
             }
         }

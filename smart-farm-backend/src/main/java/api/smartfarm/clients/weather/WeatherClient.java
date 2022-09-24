@@ -153,7 +153,10 @@ public class WeatherClient {
         );
 
         try {
-            return restTemplate.getForObject(futureForecastUrl, FutureForecastData.class);
+            FutureForecastData futureForecastData = restTemplate.getForObject(futureForecastUrl, FutureForecastData.class);
+
+            LOGGER.info("FutureForecastData for key[{}]: {}", locationKey, futureForecastData);
+            return futureForecastData;
         } catch (HttpServerErrorException.ServiceUnavailable e) {
             throw new LimitReachException(e.getMessage());
         } catch (Exception e) {

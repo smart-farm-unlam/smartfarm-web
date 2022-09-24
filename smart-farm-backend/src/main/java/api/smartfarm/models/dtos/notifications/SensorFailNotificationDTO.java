@@ -17,7 +17,9 @@ public class SensorFailNotificationDTO extends NotificationDTO {
             sensorFailNotification.getDate(),
             sensorFailNotification.getFarmId(),
             sensorFailNotification.getUserId(),
-            sensorFailNotification.getType()
+            sensorFailNotification.getType(),
+            sensorFailNotification.getTitle(),
+            sensorFailNotification.getBody()
         );
         this.sensorCode = sensorFailNotification.getSensorCode();
     }

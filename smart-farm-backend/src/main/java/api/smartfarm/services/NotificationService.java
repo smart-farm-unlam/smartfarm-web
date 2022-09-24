@@ -63,27 +63,27 @@ public class NotificationService {
             sectorCode = sectorRetrieve.get().getCode();
         }
 
-        String title = String.format("Sensor %s fallando.", sectorCode);
+        String title = String.format("Sensor %s fallando", sectorCode);
         String body = String.format("El sensor %s esta fallando, favor de revisar la conexión.", sectorCode);
         Notification notification = buildNotification(title, body);
         MulticastMessage message = buildMessage(notification, sectorCode, sensorCode, user);
-        SmartFarmNotification sfNotification = buildSensorFailNotification(farm, user, sensorCode);
+        SmartFarmNotification sfNotification = buildSensorFailNotification(farm, user, sensorCode, title, body);
 
         sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
         saveNotification(sfNotification);
     }
 
     public void sendParameterOutOfRange(
-        String notificationBody,
+        String body,
         Farm farm
     ) {
 
         User user = userService.getUserById(farm.getUserId());
 
         String title = "Hay parámetros fuera de lo normal en tu huerta!";
-        Notification notification = buildNotification(title, notificationBody);
+        Notification notification = buildNotification(title, body);
         MulticastMessage message = buildMessage(notification, user);
-        SmartFarmNotification sfNotification = buildParameterOutOfRangeNotification(farm, user);
+        SmartFarmNotification sfNotification = buildParameterOutOfRangeNotification(farm, user, title, body);
 
         sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
         saveNotification(sfNotification);
@@ -98,37 +98,59 @@ public class NotificationService {
 
         Notification notification = buildNotification(title, body);
         MulticastMessage message = buildMessage(notification, user);
-        SmartFarmNotification sfNotification = buildWeatherAlertNotification(farm, user);
+        SmartFarmNotification sfNotification = buildWeatherAlertNotification(farm, user, title, body);
 
         sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
         saveNotification(sfNotification);
     }
 
-    private SensorFailNotification buildSensorFailNotification(Farm farm, User user, String sensorCode) {
+    private SensorFailNotification buildSensorFailNotification(
+        Farm farm,
+        User user,
+        String sensorCode,
+        String title,
+        String body
+    ) {
         return new SensorFailNotification(
             new Date(),
             farm.getId(),
             user.getId(),
             user.getDeviceIds(),
-            sensorCode
+            sensorCode,
+            title,
+            body
         );
     }
 
-    private ParameterOutOfRangeNotification buildParameterOutOfRangeNotification(Farm farm, User user) {
+    private ParameterOutOfRangeNotification buildParameterOutOfRangeNotification(
+        Farm farm,
+        User user,
+        String title,
+        String body
+    ) {
         return new ParameterOutOfRangeNotification(
             new Date(),
             farm.getId(),
             user.getId(),
-            user.getDeviceIds()
+            user.getDeviceIds(),
+            title,
+            body
         );
     }
 
-    private WeatherAlertNotification buildWeatherAlertNotification(Farm farm, User user) {
+    private WeatherAlertNotification buildWeatherAlertNotification(
+        Farm farm,
+        User user,
+        String title,
+        String body
+    ) {
         return new WeatherAlertNotification(
             new Date(),
             farm.getId(),
             user.getId(),
-            user.getDeviceIds()
+            user.getDeviceIds(),
+            title,
+            body
         );
     }
 
