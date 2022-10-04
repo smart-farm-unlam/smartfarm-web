@@ -26,6 +26,8 @@ public class Diagnostic {
 
     private String imgUrl;
 
+    private String farmId;
+
     @DocumentReference
     private DiagnosticType diagnosticType;
 }

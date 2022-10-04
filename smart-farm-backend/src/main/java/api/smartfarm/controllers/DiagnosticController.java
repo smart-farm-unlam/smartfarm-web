@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/diagnostic")
 @CrossOrigin
@@ -27,5 +29,13 @@ public class DiagnosticController {
         @RequestParam("file") MultipartFile imageFile
     ) {
         return diagnosticService.runDiagnosticFromFile(farmId, plantId, imageFile);
+    }
+
+    @GetMapping("/{farmId}/{plantId}/historic")
+    public List<Diagnostic> getDiagnosticHistoric(
+            @PathVariable String farmId,
+            @PathVariable String plantId
+    ) {
+        return diagnosticService.getDiagnosticHistoric(farmId, plantId);
     }
 }

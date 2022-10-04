@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,7 +15,6 @@ public class Plant {
     private String id;
     private Integer row;
     private Integer column;
-    private List<String> diagnostics;
 
     public Plant(PlantDTO plantDTO) {
         this.row = plantDTO.getRow() == null ? 0 : plantDTO.getRow();
