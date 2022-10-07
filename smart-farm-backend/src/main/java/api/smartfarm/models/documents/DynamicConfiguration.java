@@ -13,9 +13,12 @@ public class DynamicConfiguration {
     private CronType cronType;
     private String cronInterval;
     private long timeToReSendNotification;
+    private boolean scheduleRunEnabled;
+    private long maxElapsedTime;
 
     public enum CronType {
         MEASURES_CONTROL,
-        WEATHER_EVENT_CONTROL
+        WEATHER_EVENT_CONTROL,
+        DISCONNECTION_CONTROL
     }
 }

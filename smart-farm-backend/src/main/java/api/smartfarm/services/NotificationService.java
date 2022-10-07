@@ -104,6 +104,19 @@ public class NotificationService {
         saveNotification(sfNotification);
     }
 
+    public void sendFarmDisconnectedNotification(Farm farm, Date lastMeasureDateTime) {
+        User user = userService.getUserById(farm.getUserId());
+
+        String title = "¡Revisa la conexión de tu huerta!";
+        String body = "Detectamos que ha pasado tiempo desde la última medición obtenida.";
+        Notification notification = buildNotification(title, body);
+        MulticastMessage message = buildMessage(notification, user);
+        SmartFarmNotification sfNotification = buildFarmDisconnectedNotification(farm, user, title, body,lastMeasureDateTime);
+
+        sfNotification.setStatus(sendPushNotification(message, sfNotification, user));
+        saveNotification(sfNotification);
+    }
+
     private SensorFailNotification buildSensorFailNotification(
         Farm farm,
         User user,
@@ -151,6 +164,24 @@ public class NotificationService {
             user.getDeviceIds(),
             title,
             body
+        );
+    }
+
+    private SmartFarmNotification buildFarmDisconnectedNotification(
+            Farm farm,
+            User user,
+            String title,
+            String body,
+            Date lastMeasureDateTime
+    ) {
+        return new FarmDisconnectedNotification(
+                new Date(),
+                farm.getId(),
+                user.getId(),
+                user.getDeviceIds(),
+                title,
+                body,
+                lastMeasureDateTime
         );
     }
 

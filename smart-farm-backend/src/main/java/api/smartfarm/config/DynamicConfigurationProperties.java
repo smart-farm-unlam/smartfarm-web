@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static api.smartfarm.models.documents.DynamicConfiguration.CronType.MEASURES_CONTROL;
-import static api.smartfarm.models.documents.DynamicConfiguration.CronType.WEATHER_EVENT_CONTROL;
+import static api.smartfarm.models.documents.DynamicConfiguration.CronType.*;
 
 @Configuration
 public class DynamicConfigurationProperties {
@@ -38,6 +37,17 @@ public class DynamicConfigurationProperties {
     @Bean(name = "weatherCronInterval")
     public String weatherCronInterval() {
         DynamicConfiguration weatherControl = dynamicConfigDAO.findByCronType(WEATHER_EVENT_CONTROL.name());
+        return weatherControl.getCronInterval();
+    }
+
+    @Bean(name = "disconnectionCronConfiguration")
+    public DynamicConfiguration disconnectionCronConfiguration() {
+        return dynamicConfigDAO.findByCronType(DISCONNECTION_CONTROL.name());
+    }
+
+    @Bean(name = "disconnectControlControlCronInterval")
+    public String disconnectControlControlCronInterval() {
+        DynamicConfiguration weatherControl = dynamicConfigDAO.findByCronType(DISCONNECTION_CONTROL.name());
         return weatherControl.getCronInterval();
     }
 }

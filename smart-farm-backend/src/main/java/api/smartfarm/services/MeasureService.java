@@ -126,4 +126,8 @@ public class MeasureService {
         }
         return null;
     }
+
+    public Measure getLastMeasureByFarmId(String farmId) {
+        return measureDAO.findTop1ByFarmIdOrderByDateTimeDesc(farmId);
+    }
 }
