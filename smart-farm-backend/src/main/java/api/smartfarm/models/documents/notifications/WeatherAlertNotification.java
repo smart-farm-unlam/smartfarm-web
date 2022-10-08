@@ -12,7 +12,22 @@ import java.util.List;
 @NoArgsConstructor
 public class WeatherAlertNotification extends SmartFarmNotification {
 
-    public WeatherAlertNotification(Date date, String farmId, String userId, List<String> devices) {
-        super(date, farmId, userId, devices, NotificationType.WEATHER_ALERT_NOTIFICATION.getDescription());
+    public WeatherAlertNotification(
+        Date date,
+        String farmId,
+        String userId,
+        List<String> devices,
+        String title,
+        String body
+    ) {
+        super(
+            date,
+            farmId,
+            userId,
+            devices,
+            NotificationType.WEATHER_ALERT_NOTIFICATION.getDescription(),
+            title,
+            body
+        );
     }
 }

@@ -23,13 +23,17 @@ public abstract class SmartFarmNotification {
     private NotificationStatus status;
     private List<String> messageIds;
     private String type;
+    private String title;
+    private String body;
 
     protected SmartFarmNotification(
         Date date,
         String farmId,
         String userId,
         List<String> devices,
-        String type
+        String type,
+        String title,
+        String body
     ) {
         this.date = date;
         this.farmId = farmId;
@@ -37,6 +41,8 @@ public abstract class SmartFarmNotification {
         this.devices = devices;
         this.messageIds = new ArrayList<>();
         this.type = type;
+        this.title = title;
+        this.body = body;
     }
 
     public void addMessageId(String messageId) {
