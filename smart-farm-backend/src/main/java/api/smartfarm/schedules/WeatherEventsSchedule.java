@@ -65,7 +65,7 @@ public class WeatherEventsSchedule {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         DayOfWeek day = tomorrow.getDayOfWeek();
 
-        String tomorrowText = day.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        String tomorrowText = day.getDisplayName(TextStyle.FULL, new Locale("es", "AR"))
             .concat(" " + tomorrow.getDayOfMonth() + "/" + tomorrow.getMonthValue());
 
         return String.format(TITLE, tomorrowText);
