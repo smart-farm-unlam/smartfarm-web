@@ -24,7 +24,8 @@ public class DiagnosticType {
         BT("Bacterial"),
         SB("Septoria Blight"),
         SLS("Stemphylium Leaf Spot"),
-        WR("White Rust");
+        WR("White Rust"),
+        UW("Underwatered");
         private final String description;
 
         DiagnosticTypeId(String description) {

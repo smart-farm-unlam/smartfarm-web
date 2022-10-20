@@ -15,21 +15,28 @@ async def diagnosticPlant(url: str):
 def diagnosticPlant(url):
 
     class_names = [
-        {"desc": 'arugula_downy_mildew', "enum": "DM"},
-        {"desc": 'arugula_powdery_mildew', "enum": "PM"},
-        {"desc": 'basil_healthy', "enum": "HT"},
-        {"desc": 'lettuce_bacterial', "enum": "BT"},
-        {"desc": 'lettuce_fungus_downy_mildew', "enum": "DM"},
-        {"desc": 'lettuce_fungus_powdery_mildew', "enum": "PM"},
-        {"desc": 'lettuce_fungus_septoria_blight', "enum": "SB"},
-        {"desc": 'lettuce_healthy', "enum": "HT"},
-        {"desc": 'spinach_downy_mildew', "enum": "DM"},
-        {"desc": 'arugula_downy_mildew', "enum": "DM"},
-        {"desc": 'spinach_stemphylium_leaf_spot', "enum": "SLS"},
-        {"desc": 'spinach_white_rust', "enum": "WR"}
+        {"desc": 'arugula_downy_mildew',"enum": "DM"},
+        {"desc": 'arugula_healthy',"enum": "HT"},
+        {"desc": 'arugula_powdery_mildew',"enum": "PM"},
+        {"desc": 'arugula_white__rust',"enum": "WR"},
+        {"desc": 'basil_downy_mildew',"enum": "DM"},
+        {"desc": 'basil_healthy',"enum": "HT"},
+        {"desc": 'chard_healthy',"enum": "HT"},
+        {"desc": 'lettuce_bacterial',"enum": "BT"},
+        {"desc": 'lettuce_downy_mildew',"enum": "DM"},
+        {"desc": 'lettuce_healthy',"enum": "HT"},
+        {"desc": 'lettuce_powdery_mildew',"enum": "PM"},
+        {"desc": 'lettuce_septoria_blight',"enum": "SB"},
+        {"desc": 'spinach_downy_mildew',"enum": "DM"},
+        {"desc": 'spinach_healthy',"enum": "HT"},
+        {"desc": 'spinach_stemphylium_leaf_spot',"enum": "SLS"},
+        {"desc": 'spinach_white_rust',"enum": "WR"},
+        {"desc": 'underwatered', "enum": "UW"}
     ]
 
-    modelPath = "./mio_84%.h5"
+
+
+    modelPath = "./lastmodel.h5"
 
     def custom_loss(y_true, y_pred):
         return loss(y_true, y_pred)
