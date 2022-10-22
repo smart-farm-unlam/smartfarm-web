@@ -1,5 +1,6 @@
 package api.smartfarm.controllers;
 
+import api.smartfarm.models.documents.MockedValue;
 import api.smartfarm.models.dtos.AverageMeasureHistoricDTO;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.models.entities.SensorDateFilter;
@@ -38,5 +39,13 @@ public class SensorController {
         @RequestParam SensorDateFilter dateFilter
     ) {
         return sensorService.getAverageHistoric(farmId, sensorCode, dateFilter);
+    }
+
+    //This is for anti-frost system demo
+    @GetMapping("/{sensorCode}/mock")
+    public MockedValue mockedValueBySensorCode(
+        @PathVariable String sensorCode
+    ) {
+        return sensorService.getMockValueBySensorCode(sensorCode);
     }
 }

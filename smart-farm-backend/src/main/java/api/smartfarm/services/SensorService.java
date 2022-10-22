@@ -2,11 +2,14 @@ package api.smartfarm.services;
 
 import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.Measure;
+import api.smartfarm.models.documents.MockedValue;
 import api.smartfarm.models.dtos.AverageMeasureHistoricDTO;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.entities.SensorDateFilter;
 import api.smartfarm.models.entities.SensorStatus;
+import api.smartfarm.models.exceptions.NotFoundException;
+import api.smartfarm.repositories.MockValueDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +24,16 @@ public class SensorService {
     private final FarmService farmService;
     private final MeasureService measureService;
     private final NotificationService notificationService;
+    private final MockValueDAO mockValueDAO;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorService.class);
 
     @Autowired
-    public SensorService(FarmService farmService, MeasureService measureService1, NotificationService notificationService) {
+    public SensorService(FarmService farmService, MeasureService measureService1, NotificationService notificationService, MockValueDAO mockValueDAO) {
         this.farmService = farmService;
         this.measureService = measureService1;
         this.notificationService = notificationService;
+        this.mockValueDAO = mockValueDAO;
     }
 
     public void handleMeasures(String farmId, List<SensorRequestDTO> sensorData) {
@@ -80,5 +85,12 @@ public class SensorService {
 
     public List<AverageMeasureHistoricDTO> getAverageHistoric(String farmId, String sensorCode, SensorDateFilter sensorDateFilter) {
         return measureService.getAverageMeasureBySensorCode(farmId, sensorCode, sensorDateFilter);
+    }
+
+    public MockedValue getMockValueBySensorCode(String sensorCode) {
+        return mockValueDAO.findById(sensorCode).orElseThrow(() -> {
+            String errorMsg = "Mocked value for " + sensorCode + " not exists on database";
+            return new NotFoundException(errorMsg);
+        });
     }
 }

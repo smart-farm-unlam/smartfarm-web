@@ -15,9 +15,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             //this is a hack for microcontroller, TODO: implement token update on ESP32
-            .antMatchers("/sensors/crop-types/micro").permitAll()
+            .antMatchers("/sectors/**/crop-types/micro").permitAll()
             .antMatchers("/sensors/**/events").permitAll()
             .antMatchers(HttpMethod.POST, "/events/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/sensors/**/mock").permitAll()
             //Authenticate all request
             .antMatchers("/**").fullyAuthenticated()
             .and()
