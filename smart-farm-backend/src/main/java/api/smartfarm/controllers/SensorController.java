@@ -23,9 +23,9 @@ public class SensorController {
         this.sensorService = sensorService;
     }
 
-    @PostMapping("/{farmId}/events")
+    @PostMapping("/{farmId}")
     @ResponseStatus(HttpStatus.OK)
-    public void sensorData(
+    public void sensorsData(
         @PathVariable String farmId,
         @RequestBody List<SensorRequestDTO> sensorsData
     ) {
