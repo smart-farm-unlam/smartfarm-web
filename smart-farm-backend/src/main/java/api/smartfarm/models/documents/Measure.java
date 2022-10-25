@@ -30,7 +30,7 @@ public class Measure {
     public Measure(String farmId, String sensorCode, MeasureDTO measureDTO) {
         this.farmId = farmId;
         this.sensorCode = sensorCode;
-        dateTime = (measureDTO.getDateTime() != null)? measureDTO.getDateTime() : new Date();
-        value = Math.round(measureDTO.getValue() * 100) / 100.0;
+        this.dateTime = (measureDTO.getDateTime() != null)? measureDTO.getDateTime() : new Date();
+        this.value = Math.round(measureDTO.getValue() * 100) / 100.0;
     }
 }

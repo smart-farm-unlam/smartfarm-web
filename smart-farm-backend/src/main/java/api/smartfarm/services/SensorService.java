@@ -47,7 +47,10 @@ public class SensorService {
 
         for (SensorRequestDTO sd : sensorData) {
             String code = sd.getCode();
-            Measure lastMeasure = new Measure(farmId, code, sd.getMeasure());
+            Measure receivedMeasure = new Measure(farmId, sd.getCode(), sd.getMeasure());
+            measureService.saveMeasure(receivedMeasure);
+
+            Measure lastMeasure;
 
             Sensor sensor = sensors.stream()
                 .filter(s -> s.getCode().equals(code))
@@ -55,6 +58,7 @@ public class SensorService {
                 .orElse(null);
 
             if (sensor != null) {
+                lastMeasure = resolveLastMeasure(sensor.getLastMeasure(), receivedMeasure);
                 sensor.setLastMeasure(lastMeasure);
                 sensor.setStatus(sensor.resolveSensorStatus());
             } else {
@@ -64,15 +68,15 @@ public class SensorService {
                     .orElse(null);
 
                 if (sensor != null) {
+                    lastMeasure = resolveLastMeasure(sensor.getLastMeasure(), receivedMeasure);
                     sensor.setLastMeasure(lastMeasure);
                     sensor.setStatus(sensor.resolveSensorStatus());
                 } else {
+                    lastMeasure = receivedMeasure;
                     sensor = new Sensor(sd, lastMeasure);
                     sensors.add(sensor);
                 }
             }
-
-            measureService.saveMeasure(lastMeasure);
 
             if (SensorStatus.FAIL == sensor.getStatus()) {
                 notificationService.sendSensorFailNotification(sensor.getCode(), farm);
@@ -92,5 +96,13 @@ public class SensorService {
             String errorMsg = "Mocked value for " + sensorCode + " not exists on database";
             return new NotFoundException(errorMsg);
         });
+    }
+
+    private Measure resolveLastMeasure(Measure lastMeasure, Measure receivedMeasure) {
+        if (lastMeasure == null || receivedMeasure.getDateTime().after(lastMeasure.getDateTime())) {
+            return receivedMeasure;
+        } else {
+            return lastMeasure;
+        }
     }
 }
