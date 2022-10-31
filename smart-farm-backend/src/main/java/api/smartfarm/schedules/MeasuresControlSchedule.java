@@ -10,6 +10,8 @@ import api.smartfarm.services.CropTypeService;
 import api.smartfarm.services.FarmService;
 import api.smartfarm.services.MeasureService;
 import api.smartfarm.services.NotificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -27,6 +29,8 @@ public class MeasuresControlSchedule {
     private final MeasureService measureService;
     private final NotificationService notificationService;
     private final DynamicConfiguration measuresCronConfiguration;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeasuresControlSchedule.class);
 
     @Autowired
     public MeasuresControlSchedule(
@@ -50,6 +54,7 @@ public class MeasuresControlSchedule {
     }
 
     private void checkFarmMeasures(Farm farm) {
+        LOGGER.info("Checking farm measures threshold for farmId {}", farm.getId());
         List<String> parametersOutOfRangeMessages = buildParameterOutOfRangeMessages(farm);
 
         boolean notificationSentRecently = notificationService.notificationSentRecently(
