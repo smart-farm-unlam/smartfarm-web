@@ -17,6 +17,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             //this is a hack for microcontroller, TODO: implement token update on ESP32
             .antMatchers(HttpMethod.POST, "/events/**").permitAll()
             .antMatchers(HttpMethod.POST, "/sensors/**").permitAll()
+            .antMatchers(HttpMethod.PUT, "/sensors/**/mock").permitAll()
             .antMatchers(HttpMethod.GET).permitAll()
             //Authenticate all request
             .antMatchers("/**").fullyAuthenticated()

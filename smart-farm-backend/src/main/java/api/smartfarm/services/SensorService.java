@@ -4,6 +4,7 @@ import api.smartfarm.models.documents.Farm;
 import api.smartfarm.models.documents.Measure;
 import api.smartfarm.models.documents.MockedValue;
 import api.smartfarm.models.dtos.AverageMeasureHistoricDTO;
+import api.smartfarm.models.dtos.sensors.MockedValueRequestDTO;
 import api.smartfarm.models.dtos.sensors.SensorRequestDTO;
 import api.smartfarm.models.entities.Sensor;
 import api.smartfarm.models.entities.SensorDateFilter;
@@ -96,6 +97,25 @@ public class SensorService {
             String errorMsg = "Mocked value for " + sensorCode + " not exists on database";
             return new NotFoundException(errorMsg);
         });
+    }
+
+    public MockedValue setMockedValueBySensorCode(String sensorCode, MockedValueRequestDTO mockedValueRequest) {
+        LOGGER.info("Mocked value received for sensorCode {}: {}", sensorCode, mockedValueRequest);
+
+        MockedValue mockedValueFromDB = mockValueDAO.findById(sensorCode).orElseThrow(() -> {
+            String errorMsg = "Mocked value for " + sensorCode + " not exists on database";
+            return new NotFoundException(errorMsg);
+        });
+
+        MockedValue updatedMockedValue = new MockedValue(
+            mockedValueFromDB.getSensorCode(),
+            mockedValueRequest.getValue(),
+            mockedValueRequest.getStatus()
+        );
+
+        mockValueDAO.save(updatedMockedValue);
+        LOGGER.info("Update mocked value with sensorCode {} successfully", sensorCode);
+        return updatedMockedValue;
     }
 
     private Measure resolveLastMeasure(Measure lastMeasure, Measure receivedMeasure) {
